@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<meta name="design_doc_mode" content="canvas">
+<link rel="stylesheet" href="_ds/organic-d5b635f4-4e79-4329-90ee-abf377a18601/styles.css">
+<script src="_ds/organic-d5b635f4-4e79-4329-90ee-abf377a18601/_ds_bundle.js"></script>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600&display=swap">
+<style>
+body{margin:0;background:#e8dcc6;font-family:var(--font-body)}
+a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}
+.dv-turn{padding:44px 48px 36px;border-bottom:1px solid rgba(32,30,29,.1)}
+.dv-thd{display:flex;align-items:baseline;gap:10px;margin:0 0 22px}
+.dv-tid{font:600 10px ui-monospace,Menlo,monospace;padding:3px 7px;background:#201e1d;color:#f5ead8;border-radius:4px;text-decoration:none}
+.dv-tname{font:600 13px/1.2 var(--font-body);color:#201e1d}
+.dv-opts{display:flex;flex-wrap:wrap;gap:34px;align-items:flex-start}
+.dv-opt{flex:none;display:flex;flex-direction:column;gap:10px;scroll-margin-top:16px}
+.dv-oid{font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(32,30,29,.1);color:#201e1d;border-radius:5px;text-decoration:none}
+.dv-olabel{display:flex;align-items:baseline;gap:8px;font:400 11.5px/1.3 var(--font-body);color:rgba(32,30,29,.6)}
+.dv-opt:target .dv-oid{background:var(--color-accent);color:#fff}
+.dv-row{display:flex;gap:26px;align-items:flex-start}
+.dv-cap{font:400 11px/1.3 var(--font-body);color:rgba(32,30,29,.5);margin-top:2px}
+.dv-next{margin:24px 0 0;font:12px/1.6 var(--font-body);color:rgba(32,30,29,.55)}
+@keyframes pluck{0%,6%{transform:translateY(0) scale(1);opacity:1}22%{transform:translateY(-13px) scale(1.14);opacity:1}40%,86%{transform:translateY(-24px) scale(1.02);opacity:0}100%{transform:translateY(0) scale(1);opacity:1}}
+@keyframes socket{0%,10%{opacity:0}26%,86%{opacity:1}100%{opacity:0}}
+@keyframes settle{0%,28%{opacity:0;transform:translateY(-16px) scale(.86)}44%{opacity:1;transform:translateY(3px) scale(1.05)}52%,86%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-16px) scale(.86)}}
+@keyframes pen{0%{opacity:0;transform:translateY(4px) scale(.9);filter:blur(1.2px)}6%{opacity:1;transform:none;filter:none}84%{opacity:1}90%,100%{opacity:0}}
+@keyframes caret{0%,48%{opacity:1}52%,100%{opacity:.05}}
+@keyframes sheen{0%,20%{opacity:0}40%{opacity:.5}70%,100%{opacity:0}}
+.mo-g{display:inline-block;animation:pluck 4.6s cubic-bezier(.32,.9,.24,1) infinite}
+.mo-s{animation:settle 4.6s cubic-bezier(.2,1.5,.4,1) infinite}
+.mo-p{display:inline-block;animation:pen .28s cubic-bezier(.22,1,.36,1) infinite;animation-duration:5.6s}
+@media (prefers-reduced-motion:reduce){.mo-g,.mo-s,.mo-p{animation:none!important;opacity:1!important;transform:none!important;filter:none!important}}
+</style>
+</helmet>
+
+<section class="dv-turn" style="background:#f5ead8">
+<div style="max-width:720px">
+<div style="font:600 10px/1 ui-monospace,Menlo,monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--color-accent-700);margin-bottom:10px">Brief · read first</div>
+<h2 style="font-size:34px;margin:0 0 12px">Inkling — a photo of your handwriting becomes a real typeface</h2>
+<p style="font-size:14px;line-height:1.6;color:rgba(32,30,29,.75);margin:0 0 14px">Assumptions I made where the brief was open: <strong>iOS phone app</strong> (capture guidance and the camera are central to the flow, so a phone is the honest frame — say the word and I'll do the desktop companion). Two primary users: someone digitising a family archive of recipes and letters, and a brand turning a founder's hand into a signature face — so the copy is warm but the artifacts are treated as valuable originals, not toys.</p>
+<p style="font-size:14px;line-height:1.6;color:rgba(32,30,29,.75);margin:0 0 14px">Design context: the <strong>Organic</strong> system — cream ground, terracotta and sage accents, Caprasimo over Figtree, 16–28px radii, pill controls, washed photography. The one thing not from the system is the handwriting itself: user artifacts are rendered in a script face as a stand-in for the real extracted glyphs, so the mockups read as content rather than brand type.</p>
+<p style="font-size:14px;line-height:1.6;color:rgba(32,30,29,.75);margin:0">The signature moments you picked drive two screens: letters <em>lifting off the photo</em> into a glyph bed (review), and <em>typing a sentence in your own hand</em> (preview). Four screens per direction: Capture → Review → Type-to-test → Library &amp; export.</p>
+</div>
+</section>
+
+<section class="dv-turn" id="t8">
+<div class="dv-thd"><a class="dv-tid" href="#t8">8</a><span class="dv-tname">Motion spec — the two moments that carry the whole product</span></div>
+<p style="max-width:700px;font:400 12.5px/1.6 var(--font-body);color:rgba(32,30,29,.6);margin:-10px 0 22px">Both frames below are live and looping. One principle behind them: <strong>motion is the explanation</strong>. The lift (<a class="dv-oid" href="#8a">8a</a>) is the only thing that tells someone their letters were <em>taken from their page</em> rather than matched to a stock font — so it has to be legibly the same ink moving. The write-on (<a class="dv-oid" href="#8b">8b</a>) is the payoff, and it earns its length by mimicking a pen's pace, not a UI transition's. Everything else in the app moves in 140–220ms and gets out of the way.</p>
+<div class="dv-opts">
+
+<div class="dv-opt" id="8a">
+<div class="dv-olabel"><a class="dv-oid" href="#8a">8a</a>Letters lifting off the page · 1,180ms total</div>
+<div class="dv-row">
+
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" width="{{ dw }}" height="{{ dh }}" dark="{{ yes }}" hint-size="402px,874px">
+<div style="height:100%;background:#111310;color:#f2f4ea;display:flex;flex-direction:column;padding:62px 0 34px">
+<div style="padding:6px 22px 12px;display:flex;justify-content:space-between;align-items:baseline"><span style="font:400 19px var(--font-heading)">Reading your page</span><span style="font-size:12px;color:#d6f24b">38 found</span></div>
+<div style="margin:0 18px;border-radius:22px;overflow:hidden;background:#efe6d2;position:relative;height:250px">
+<div style="padding:26px 24px;font-family:Caveat,cursive;font-size:25px;line-height:1.75;color:rgba(27,29,24,.85)">
+Dearest <span class="mo-g" style="animation-delay:0s">E</span><span class="mo-g" style="animation-delay:.06s">l</span>len,<br>
+the <span class="mo-g" style="animation-delay:.13s">p</span><span class="mo-g" style="animation-delay:.19s">e</span><span class="mo-g" style="animation-delay:.25s">a</span>rs came in<br>
+early and the <span class="mo-g" style="animation-delay:.32s">j</span><span class="mo-g" style="animation-delay:.38s">a</span>rs<br>
+are all full <span class="mo-g" style="animation-delay:.45s">a</span><span class="mo-g" style="animation-delay:.51s">g</span>ain.
+</div>
+<div style="position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,rgba(214,242,75,.28) 50%,transparent 70%);animation:sheen 4.6s linear infinite"></div>
+</div>
+<div style="padding:18px 22px 10px;font:600 10px/1 var(--font-body);letter-spacing:.11em;text-transform:uppercase;color:rgba(242,244,234,.45)">Glyph bed</div>
+<div style="margin:0 18px;display:grid;grid-template-columns:repeat(5,1fr);gap:9px">
+<div style="position:relative;aspect-ratio:1;border-radius:15px;background:rgba(242,244,234,.05);box-shadow:inset 0 0 0 1.5px rgba(242,244,234,.1);display:flex;align-items:center;justify-content:center"><div style="position:absolute;inset:0;border-radius:15px;box-shadow:inset 0 0 0 1.5px rgba(214,242,75,.55);animation:socket 4.6s linear infinite;animation-delay:0s"></div><span class="mo-s" style="animation-delay:0s;font-family:Caveat,cursive;font-size:30px">E</span></div>
+<div style="position:relative;aspect-ratio:1;border-radius:15px;background:rgba(242,244,234,.05);box-shadow:inset 0 0 0 1.5px rgba(242,244,234,.1);display:flex;align-items:center;justify-content:center"><div style="position:absolute;inset:0;border-radius:15px;box-shadow:inset 0 0 0 1.5px rgba(214,242,75,.55);animation:socket 4.6s linear infinite;animation-delay:.06s"></div><span class="mo-s" style="animation-delay:.06s;font-family:Caveat,cursive;font-size:30px">l</span></div>
+<div style="position:relative;aspect-ratio:1;border-radius:15px;background:rgba(242,244,234,.05);box-shadow:inset 0 0 0 1.5px rgba(242,244,234,.1);display:flex;align-items:center;justify-content:center"><div style="position:absolute;inset:0;border-radius:15px;box-shadow:inset 0 0 0 1.5px rgba(214,242,75,.55);animation:socket 4.6s linear infinite;animation-delay:.13s"></div><span class="mo-s" style="animation-delay:.13s;font-family:Caveat,cursive;font-size:30px">p</span></div>
+<div style="position:relative;aspect-ratio:1;border-radius:15px;background:rgba(242,244,234,.05);box-shadow:inset 0 0 0 1.5px rgba(242,244,234,.1);display:flex;align-items:center;justify-content:center"><div style="position:absolute;inset:0;border-radius:15px;box-shadow:inset 0 0 0 1.5px rgba(214,242,75,.55);animation:socket 4.6s linear infinite;animation-delay:.19s"></div><span class="mo-s" style="animation-delay:.19s;font-family:Caveat,cursive;font-size:30px">e</span></div>
+<div style="position:relative;aspect-ratio:1;border-radius:15px;background:rgba(242,244,234,.05);box-shadow:inset 0 0 0 1.5px rgba(242,244,234,.1);display:flex;align-items:center;justify-content:center"><div style="position:absolute;inset:0;border-radius:15px;box-shadow:inset 0 0 0 1.5px rgba(214,242,75,.55);animation:socket 4.6s linear infinite;animation-delay:.25s"></div><span class="mo-s" style="animation-delay:.25s;font-family:Caveat,cursive;font-size:30px">a</span></div>
+<div style="position:relative;aspect-ratio:1;border-radius:15px;background:rgba(242,244,234,.05);box-shadow:inset 0 0 0 1.5px rgba(242,244,234,.1);display:flex;align-items:center;justify-content:center"><div style="position:absolute;inset:0;border-radius:15px;box-shadow:inset 0 0 0 1.5px rgba(214,242,75,.55);animation:socket 4.6s linear infinite;animation-delay:.32s"></div><span class="mo-s" style="animation-delay:.32s;font-family:Caveat,cursive;font-size:30px">j</span></div>
+<div style="position:relative;aspect-ratio:1;border-radius:15px;background:rgba(242,244,234,.05);box-shadow:inset 0 0 0 1.5px rgba(242,244,234,.1);display:flex;align-items:center;justify-content:center"><div style="position:absolute;inset:0;border-radius:15px;box-shadow:inset 0 0 0 1.5px rgba(214,242,75,.55);animation:socket 4.6s linear infinite;animation-delay:.38s"></div><span class="mo-s" style="animation-delay:.38s;font-family:Caveat,cursive;font-size:30px">a</span></div>
+<div style="position:relative;aspect-ratio:1;border-radius:15px;background:rgba(242,244,234,.05);box-shadow:inset 0 0 0 1.5px rgba(242,244,234,.1);display:flex;align-items:center;justify-content:center"><div style="position:absolute;inset:0;border-radius:15px;box-shadow:inset 0 0 0 1.5px rgba(214,242,75,.55);animation:socket 4.6s linear infinite;animation-delay:.45s"></div><span class="mo-s" style="animation-delay:.45s;font-family:Caveat,cursive;font-size:30px">a</span></div>
+<div style="position:relative;aspect-ratio:1;border-radius:15px;background:rgba(242,244,234,.05);box-shadow:inset 0 0 0 1.5px rgba(242,244,234,.1);display:flex;align-items:center;justify-content:center"><div style="position:absolute;inset:0;border-radius:15px;box-shadow:inset 0 0 0 1.5px rgba(214,242,75,.55);animation:socket 4.6s linear infinite;animation-delay:.51s"></div><span class="mo-s" style="animation-delay:.51s;font-family:Caveat,cursive;font-size:30px">g</span></div>
+<div style="aspect-ratio:1;border-radius:15px;background:rgba(242,244,234,.04);display:flex;align-items:center;justify-content:center;font:400 13px var(--font-body);color:rgba(242,244,234,.35)">+29</div>
+</div>
+<div style="flex:1"></div>
+<div style="padding:0 18px"><div style="background:rgba(242,244,234,.1);border-radius:999px;padding:14px 0;text-align:center;font:400 15px var(--font-heading);color:rgba(242,244,234,.5)">Review 38 letters</div></div>
+</div>
+</x-import>
+
+<div style="width:330px;padding-top:2px">
+<div style="font:400 19px/1.15 var(--font-heading);color:#201e1d;margin-bottom:10px">Beat sheet</div>
+<div style="display:flex;flex-direction:column;gap:1px;background:rgba(32,30,29,.12);border-radius:14px;overflow:hidden;font:400 11.5px/1.45 var(--font-body)">
+<div style="display:flex;gap:10px;background:#f5ead8;padding:10px 13px"><b style="width:78px;flex:none;font:600 10px ui-monospace,monospace;color:rgba(32,30,29,.5);padding-top:2px">0–260ms</b><span style="color:rgba(32,30,29,.8)"><b>Scan sheen</b> sweeps the photo once, left to right. Signals reading, covers the model's real latency.</span></div>
+<div style="display:flex;gap:10px;background:#f5ead8;padding:10px 13px"><b style="width:78px;flex:none;font:600 10px ui-monospace,monospace;color:rgba(32,30,29,.5);padding-top:2px">260–600</b><span style="color:rgba(32,30,29,.8)"><b>Pluck.</b> Each glyph rises 13px and scales to 1.14 in 340ms, <code>cubic-bezier(.32,.9,.24,1)</code>. Stagger 60ms, capped at 12 visible — the rest are implied by the counter.</span></div>
+<div style="display:flex;gap:10px;background:#f5ead8;padding:10px 13px"><b style="width:78px;flex:none;font:600 10px ui-monospace,monospace;color:rgba(32,30,29,.5);padding-top:2px">340–900</b><span style="color:rgba(32,30,29,.8)"><b>Travel &amp; settle.</b> The glyph flies to its cell on an arc, landing with a 1.05 overshoot on a springy curve. The hole it left stays visibly empty on the page.</span></div>
+<div style="display:flex;gap:10px;background:#f5ead8;padding:10px 13px"><b style="width:78px;flex:none;font:600 10px ui-monospace,monospace;color:rgba(32,30,29,.5);padding-top:2px">900–1180</b><span style="color:rgba(32,30,29,.8)"><b>Cells resolve.</b> Lime outline for confident, violet for uncertain — arriving <em>after</em> the letter lands so judgement never precedes the object.</span></div>
+<div style="display:flex;gap:10px;background:#f5ead8;padding:10px 13px"><b style="width:78px;flex:none;font:600 10px ui-monospace,monospace;color:rgba(32,30,29,.5);padding-top:2px">Haptics</b><span style="color:rgba(32,30,29,.8)">One soft impact on the first landing only. Thirty-eight taps is a vibrating brick.</span></div>
+<div style="display:flex;gap:10px;background:#f5ead8;padding:10px 13px"><b style="width:78px;flex:none;font:600 10px ui-monospace,monospace;color:rgba(32,30,29,.5);padding-top:2px">Skippable</b><span style="color:rgba(32,30,29,.8)">A tap anywhere jumps to the settled state. Never gate the CTA behind the animation — it plays once per page, not per revisit.</span></div>
+</div>
+</div>
+
+</div>
+<div class="dv-cap">The letter that leaves the page leaves a gap behind it — that absence is what proves the extraction is real, so never cross-fade the photo back to whole.</div>
+</div>
+
+<div class="dv-opt" id="8b">
+<div class="dv-olabel"><a class="dv-oid" href="#8b">8b</a>Typing in your own hand · pen-paced, 55ms per glyph</div>
+<div class="dv-row">
+
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" width="{{ dw }}" height="{{ dh }}" dark="{{ yes }}" hint-size="402px,874px">
+<div style="height:100%;background:#f2f4ea;color:#1b1d18;display:flex;flex-direction:column;padding:62px 0 0">
+<div style="padding:6px 22px 14px;display:flex;justify-content:space-between;align-items:baseline"><span style="font:400 19px var(--font-heading)">Ellen's Hand</span><span style="font-size:12px;color:#6b5ce0">try it</span></div>
+<div style="margin:0 18px;background:#fff;border-radius:24px;padding:22px;min-height:210px;box-shadow:0 10px 28px rgba(27,29,24,.09)">
+<div style="font:600 9.5px/1 var(--font-body);letter-spacing:.11em;text-transform:uppercase;color:rgba(27,29,24,.4);margin-bottom:14px">Type anything</div>
+<div style="font-family:Caveat,cursive;font-size:31px;line-height:1.5;color:#1b1d18">
+<span class="mo-p" style="animation-delay:0s">t</span><span class="mo-p" style="animation-delay:.055s">h</span><span class="mo-p" style="animation-delay:.11s">e</span><span style="display:inline-block;width:.34em"></span><span class="mo-p" style="animation-delay:.19s">j</span><span class="mo-p" style="animation-delay:.245s">a</span><span class="mo-p" style="animation-delay:.3s">r</span><span class="mo-p" style="animation-delay:.355s">s</span><span style="display:inline-block;width:.34em"></span><span class="mo-p" style="animation-delay:.43s">a</span><span class="mo-p" style="animation-delay:.485s">r</span><span class="mo-p" style="animation-delay:.54s">e</span><span style="display:inline-block;width:.34em"></span><span class="mo-p" style="animation-delay:.62s">a</span><span class="mo-p" style="animation-delay:.675s">l</span><span class="mo-p" style="animation-delay:.73s">l</span><span style="display:inline-block;width:.34em"></span><span class="mo-p" style="animation-delay:.81s">f</span><span class="mo-p" style="animation-delay:.865s">u</span><span class="mo-p" style="animation-delay:.92s">l</span><span class="mo-p" style="animation-delay:.975s">l</span><span style="display:inline-block;width:.34em"></span><span class="mo-p" style="animation-delay:1.05s">a</span><span class="mo-p" style="animation-delay:1.105s">g</span><span class="mo-p" style="animation-delay:1.16s">a</span><span class="mo-p" style="animation-delay:1.215s">i</span><span class="mo-p" style="animation-delay:1.27s">n</span><span style="display:inline-block;width:2px;height:29px;background:#6b5ce0;vertical-align:-5px;margin-left:2px;animation:caret 1.06s steps(1,end) infinite"></span>
+</div>
+</div>
+<div style="padding:16px 22px 0;display:flex;gap:8px;flex-wrap:wrap">
+<div style="background:rgba(107,92,224,.12);color:#4c3fc0;border-radius:999px;padding:8px 13px;font:600 11.5px/1 var(--font-body)">two of the a's differ</div>
+<div style="box-shadow:inset 0 0 0 1.5px rgba(27,29,24,.14);border-radius:999px;padding:8px 13px;font:600 11.5px/1 var(--font-body);color:rgba(27,29,24,.6)">slower</div>
+</div>
+<div style="flex:1"></div>
+<div style="background:#dcdfd4;padding:9px 5px 26px;border-radius:0 0 30px 30px">
+<div style="display:flex;gap:5px;justify-content:center;margin-bottom:7px">
+<div style="width:30px;height:40px;background:#fff;border-radius:6px;box-shadow:0 1px 0 rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;font-size:15px">q</div>
+<div style="width:30px;height:40px;background:#fff;border-radius:6px;box-shadow:0 1px 0 rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;font-size:15px">w</div>
+<div style="width:30px;height:40px;background:#fff;border-radius:6px;box-shadow:0 1px 0 rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;font-size:15px">e</div>
+<div style="width:30px;height:40px;background:#fff;border-radius:6px;box-shadow:0 1px 0 rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;font-size:15px">r</div>
+<div style="width:30px;height:40px;background:#fff;border-radius:6px;box-shadow:0 1px 0 rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;font-size:15px">t</div>
+<div style="width:30px;height:40px;background:#fff;border-radius:6px;box-shadow:0 1px 0 rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;font-size:15px">y</div>
+<div style="width:30px;height:40px;background:#fff;border-radius:6px;box-shadow:0 1px 0 rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;font-size:15px">u</div>
+<div style="width:30px;height:40px;background:#fff;border-radius:6px;box-shadow:0 1px 0 rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;font-size:15px">i</div>
+<div style="width:30px;height:40px;background:#fff;border-radius:6px;box-shadow:0 1px 0 rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;font-size:15px">o</div>
+<div style="width:30px;height:40px;background:#fff;border-radius:6px;box-shadow:0 1px 0 rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;font-size:15px">p</div>
+</div>
+<div style="display:flex;gap:5px;justify-content:center;margin-bottom:7px">
+<div style="width:30px;height:40px;background:#fff;border-radius:6px;box-shadow:0 1px 0 rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;font-size:15px">a</div>
+<div style="width:30px;height:40px;background:#fff;border-radius:6px;box-shadow:0 1px 0 rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;font-size:15px">s</div>
+<div style="width:30px;height:40px;background:#fff;border-radius:6px;box-shadow:0 1px 0 rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;font-size:15px">d</div>
+<div style="width:30px;height:40px;background:#fff;border-radius:6px;box-shadow:0 1px 0 rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;font-size:15px">f</div>
+<div style="width:30px;height:40px;background:#fff;border-radius:6px;box-shadow:0 1px 0 rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;font-size:15px">g</div>
+<div style="width:30px;height:40px;background:#fff;border-radius:6px;box-shadow:0 1px 0 rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;font-size:15px">h</div>
+<div style="width:30px;height:40px;background:#fff;border-radius:6px;box-shadow:0 1px 0 rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;font-size:15px">j</div>
+<div style="width:30px;height:40px;background:#fff;border-radius:6px;box-shadow:0 1px 0 rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;font-size:15px">k</div>
+<div style="width:30px;height:40px;background:#fff;border-radius:6px;box-shadow:0 1px 0 rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;font-size:15px">l</div>
+</div>
+<div style="display:flex;gap:5px;justify-content:center">
+<div style="width:44px;height:40px;background:rgba(27,29,24,.13);border-radius:6px"></div>
+<div style="width:30px;height:40px;background:#fff;border-radius:6px;box-shadow:0 1px 0 rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;font-size:15px">z</div>
+<div style="width:30px;height:40px;background:#fff;border-radius:6px;box-shadow:0 1px 0 rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;font-size:15px">x</div>
+<div style="width:30px;height:40px;background:#fff;border-radius:6px;box-shadow:0 1px 0 rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;font-size:15px">c</div>
+<div style="width:30px;height:40px;background:#fff;border-radius:6px;box-shadow:0 1px 0 rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;font-size:15px">v</div>
+<div style="width:30px;height:40px;background:#fff;border-radius:6px;box-shadow:0 1px 0 rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;font-size:15px">b</div>
+<div style="width:30px;height:40px;background:#fff;border-radius:6px;box-shadow:0 1px 0 rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;font-size:15px">n</div>
+<div style="width:44px;height:40px;background:rgba(27,29,24,.13);border-radius:6px"></div>
+</div>
+</div>
+</div>
+</x-import>
+
+<div style="width:330px;padding-top:2px">
+<div style="font:400 19px/1.15 var(--font-heading);color:#201e1d;margin-bottom:10px">Rules for the write-on</div>
+<div style="display:flex;flex-direction:column;gap:1px;background:rgba(32,30,29,.12);border-radius:14px;overflow:hidden;font:400 11.5px/1.45 var(--font-body)">
+<div style="display:flex;gap:10px;background:#f5ead8;padding:10px 13px"><b style="width:78px;flex:none;font:600 10px ui-monospace,monospace;color:rgba(32,30,29,.5);padding-top:2px">Per glyph</b><span style="color:rgba(32,30,29,.8)">180ms fade-up from 4px with a 1.2px ink-blur burning off — the wet-to-dry read. Never a typewriter cut.</span></div>
+<div style="display:flex;gap:10px;background:#f5ead8;padding:10px 13px"><b style="width:78px;flex:none;font:600 10px ui-monospace,monospace;color:rgba(32,30,29,.5);padding-top:2px">Cadence</b><span style="color:rgba(32,30,29,.8)">55ms between letters, <b>+30ms after a space</b>, +90ms after a comma or full stop. Even cadence is the tell of a machine; a hand hesitates at joins.</span></div>
+<div style="display:flex;gap:10px;background:#f5ead8;padding:10px 13px"><b style="width:78px;flex:none;font:600 10px ui-monospace,monospace;color:rgba(32,30,29,.5);padding-top:2px">Real typing</b><span style="color:rgba(32,30,29,.8)">When the user types, the glyph appears on <em>keydown</em> with the same 180ms fade — no queue, no lag. The auto-demo only runs on the untouched field and dies at the first keystroke.</span></div>
+<div style="display:flex;gap:10px;background:#f5ead8;padding:10px 13px"><b style="width:78px;flex:none;font:600 10px ui-monospace,monospace;color:rgba(32,30,29,.5);padding-top:2px">Variants</b><span style="color:rgba(32,30,29,.8)">Repeat letters cycle through the alternates captured from the page. The chip calls it out once — the point of the whole product is that the second <em>a</em> isn't the first.</span></div>
+<div style="display:flex;gap:10px;background:#f5ead8;padding:10px 13px"><b style="width:78px;flex:none;font:600 10px ui-monospace,monospace;color:rgba(32,30,29,.5);padding-top:2px">Caret</b><span style="color:rgba(32,30,29,.8)">System 1.06s blink, violet, sits on the baseline of the last glyph. It's the one element allowed to look like software.</span></div>
+</div>
+<div style="font:400 19px/1.15 var(--font-heading);color:#201e1d;margin:20px 0 8px">Everything else</div>
+<div style="font:400 12px/1.6 var(--font-body);color:rgba(32,30,29,.72)">
+<p style="margin:0 0 8px">Standard transitions: <b>160ms</b> <code>ease-out</code> for appearance, <b>220ms</b> for screen pushes, <b>120ms</b> for a control's own state. Nothing in the app animates for longer than the two moments above — they're the only places where duration is the message.</p>
+<p style="margin:0 0 8px">Confidence colour always cross-fades over 200ms rather than snapping, because it changes as you edit and a snap reads as an error.</p>
+<p style="margin:0"><b>Reduced motion:</b> the lift becomes a 200ms cross-fade with the count ticking up; the write-on prints the sentence whole. Both keep the <em>information</em> — letters came from your page, this is your hand — and drop only the travel. The frames above honour the setting live.</p>
+</div>
+</div>
+
+</div>
+<div class="dv-cap">Pen-paced, not UI-paced: the sentence takes ~1.3s to write, which is slow for an interface and fast for a hand.</div>
+</div>
+
+</div>
+<p class="dv-next">Try next: “the desktop companion — kerning, variants, licence seats” · “the library screen” · “build the write-on as a real interactive field”</p>
+</section>
+
+<section class="dv-turn" id="t7">
+<div class="dv-thd"><a class="dv-tid" href="#t7">7</a><span class="dv-tname">When the photo doesn't work — the states that keep people from blaming themselves</span></div>
+<p style="max-width:700px;font:400 12.5px/1.6 var(--font-body);color:rgba(32,30,29,.6);margin:-10px 0 22px">Two rules across all of these. <strong>Catch it in the camera, not after</strong> — a warning before the shutter costs a second, a failure after the read costs the whole attempt, so <a class="dv-oid" href="#7a">7a</a> intervenes live and never blocks the button (people photographing a fragile letter under bad light may have no better option). And <strong>every failure names the cause and offers the next move</strong>: no dead ends, no "something went wrong". The artifact is never the thing at fault — the light, the angle, the pen are.</p>
+<div class="dv-opts">
+
+<div class="dv-opt" id="7a">
+<div class="dv-olabel"><a class="dv-oid" href="#7a">7a</a>Caught live in the camera — advisory, never blocking</div>
+<div class="dv-row">
+
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" width="{{ dw }}" height="{{ dh }}" dark="{{ yes }}" hint-size="402px,874px">
+<div style="height:100%;background:#0b0c0a;color:#f2f4ea;display:flex;flex-direction:column;padding:62px 0 34px;position:relative">
+<div style="padding:6px 22px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:rgba(242,244,234,.7)"><span>Cancel</span><span style="color:#d6f24b">Guides on</span></div>
+<div style="flex:1;margin:16px 18px;border-radius:26px;position:relative;overflow:hidden;background:linear-gradient(150deg,#3a3524,#221f18 55%,#171612)">
+<div style="position:absolute;inset:34px 26px;background:#efe6d2;border-radius:6px;transform:rotate(-1.5deg);box-shadow:0 18px 40px rgba(0,0,0,.5)">
+<div style="padding:26px 22px;font-family:Caveat,cursive;font-size:21px;line-height:1.65;color:rgba(27,29,24,.82)">Dearest Ellen,<br>the pears came in early<br>this year and the jars<br>are all full again.</div>
+</div>
+<div style="position:absolute;left:-40px;top:-60px;width:300px;height:260px;background:radial-gradient(closest-side,rgba(255,255,255,.72),rgba(255,255,255,0));filter:blur(6px)"></div>
+<div style="position:absolute;left:44px;top:34px;width:150px;height:118px;border-radius:20px;box-shadow:inset 0 0 0 2.5px #d6f24b"></div>
+<div style="position:absolute;left:44px;top:160px;background:#d6f24b;color:#111310;font:600 11px/1 var(--font-body);padding:6px 10px;border-radius:999px">glare here</div>
+</div>
+<div style="margin:0 18px 14px;background:#d6f24b;color:#111310;border-radius:22px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start">
+<div style="width:26px;height:26px;flex:none;border-radius:999px;background:#111310;color:#d6f24b;display:flex;align-items:center;justify-content:center;font:600 15px var(--font-body)">!</div>
+<div>
+<div style="font:400 17px/1.1 var(--font-heading)">A window is washing out the top-left</div>
+<div style="font-size:12.5px;line-height:1.45;margin-top:4px;color:rgba(17,19,16,.78)">Four lines are unreadable in there. Turn the page 90° or step out of the light — we'll tell you when it clears.</div>
+</div>
+</div>
+<div style="padding:0 22px;display:flex;align-items:center;justify-content:space-between">
+<div style="font-size:12.5px;color:rgba(242,244,234,.5);width:96px">Shoot anyway</div>
+<div style="width:70px;height:70px;border-radius:999px;box-shadow:inset 0 0 0 3px rgba(242,244,234,.5);display:flex;align-items:center;justify-content:center"><div style="width:56px;height:56px;border-radius:999px;background:rgba(242,244,234,.55)"></div></div>
+<div style="width:96px;text-align:right;font-size:12.5px;color:rgba(242,244,234,.5)">Flash off</div>
+</div>
+</div>
+</x-import>
+
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" width="{{ dw }}" height="{{ dh }}" dark="{{ yes }}" hint-size="402px,874px">
+<div style="height:100%;background:#0b0c0a;color:#f2f4ea;display:flex;flex-direction:column;padding:62px 0 34px">
+<div style="padding:6px 22px 0;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:rgba(242,244,234,.7)"><span>Cancel</span><span style="color:#d6f24b">Guides on</span></div>
+<div style="flex:1;margin:16px 18px;border-radius:26px;position:relative;overflow:hidden;background:#1a1a17">
+<div style="position:absolute;inset:30px 24px;background:#e6ddca;border-radius:6px;filter:blur(3.4px);transform:rotate(1deg)">
+<div style="padding:24px 20px;font-family:Caveat,cursive;font-size:22px;line-height:1.6;color:rgba(27,29,24,.8)">shopping — Tuesday<br>flour, yeast, two lemons<br>ring the butcher back</div>
+</div>
+<div style="position:absolute;left:0;right:0;bottom:0;padding:16px 18px;background:linear-gradient(transparent,rgba(0,0,0,.8))">
+<div style="display:flex;gap:8px;align-items:center;font-size:12px;color:rgba(242,244,234,.75)"><span style="width:7px;height:7px;border-radius:999px;background:#9b8bff"></span>Hold still — focus hunting</div>
+</div>
+</div>
+<div style="margin:0 18px 14px;background:rgba(155,139,255,.16);box-shadow:inset 0 0 0 1.5px rgba(155,139,255,.5);border-radius:22px;padding:14px 16px">
+<div style="font:400 17px/1.15 var(--font-heading);color:#f2f4ea">Too soft to trace strokes</div>
+<div style="font-size:12.5px;line-height:1.45;margin-top:4px;color:rgba(242,244,234,.72)">Pull back to about a forearm's length and let the focus settle. Thin pen lines need the sharpness more than print does.</div>
+<div style="display:flex;gap:8px;margin-top:12px">
+<div style="background:#f2f4ea;color:#111310;font:600 12px/1 var(--font-body);padding:9px 14px;border-radius:999px">Steady me — 3s timer</div>
+<div style="box-shadow:inset 0 0 0 1.5px rgba(242,244,234,.28);font:600 12px/1 var(--font-body);padding:9px 14px;border-radius:999px">Prop-up tips</div>
+</div>
+</div>
+<div style="padding:0 22px;display:flex;align-items:center;justify-content:space-between">
+<div style="font-size:12.5px;color:rgba(242,244,234,.5);width:96px">Photos</div>
+<div style="width:70px;height:70px;border-radius:999px;box-shadow:inset 0 0 0 3px rgba(242,244,234,.35);display:flex;align-items:center;justify-content:center"><div style="width:56px;height:56px;border-radius:999px;background:rgba(242,244,234,.35)"></div></div>
+<div style="width:96px;text-align:right;font-size:12.5px;color:rgba(242,244,234,.5)">Flash off</div>
+</div>
+</div>
+</x-import>
+
+</div>
+<div class="dv-cap">Glare is located on the page, not announced in the abstract · blur names the fix and offers a timer. Both keep the shutter live.</div>
+</div>
+
+<div class="dv-opt" id="7b">
+<div class="dv-olabel"><a class="dv-oid" href="#7b">7b</a>After the read — nothing usable came back</div>
+<div class="dv-row">
+
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" width="{{ dw }}" height="{{ dh }}" dark="{{ yes }}" hint-size="402px,874px">
+<div style="height:100%;background:#111310;color:#f2f4ea;display:flex;flex-direction:column;padding:62px 0 34px">
+<div style="padding:6px 22px 0;font-size:12.5px;color:rgba(242,244,234,.5)">First photo read</div>
+<div style="padding:10px 22px 16px">
+<div style="font:400 28px/1.06 var(--font-heading)">We couldn't find<br>any handwriting</div>
+<div style="font-size:13px;line-height:1.55;color:rgba(242,244,234,.62);margin-top:8px">There's a page in there, but no strokes we can lift letters from. Most often it's one of these three.</div>
+</div>
+<div style="margin:0 18px 14px;border-radius:22px;overflow:hidden;background:#20221c;height:190px;position:relative">
+<div style="position:absolute;inset:22px;background:#efe6d2;border-radius:5px;opacity:.35"></div>
+<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:400 14px var(--font-heading);color:rgba(242,244,234,.55)">your photo</div>
+</div>
+<div style="padding:0 18px;display:flex;flex-direction:column;gap:9px">
+<div style="background:rgba(242,244,234,.06);border-radius:18px;padding:13px 16px;display:flex;gap:12px;align-items:baseline"><div style="font:400 15px var(--font-heading);color:#d6f24b;width:14px">1</div><div style="font-size:12.5px;line-height:1.45;color:rgba(242,244,234,.75)">The page is upside down or sideways — <span style="color:#d6f24b">rotate and re-read</span>, no new photo needed.</div></div>
+<div style="background:rgba(242,244,234,.06);border-radius:18px;padding:13px 16px;display:flex;gap:12px;align-items:baseline"><div style="font:400 15px var(--font-heading);color:#d6f24b;width:14px">2</div><div style="font-size:12.5px;line-height:1.45;color:rgba(242,244,234,.75)">Pencil this faint reads as paper texture. Shoot again with the light to one side.</div></div>
+<div style="background:rgba(242,244,234,.06);border-radius:18px;padding:13px 16px;display:flex;gap:12px;align-items:baseline"><div style="font:400 15px var(--font-heading);color:#d6f24b;width:14px">3</div><div style="font-size:12.5px;line-height:1.45;color:rgba(242,244,234,.75)">It's a screen or a scan of a scan. Photograph the original if you have it.</div></div>
+</div>
+<div style="flex:1"></div>
+<div style="padding:0 18px;display:flex;flex-direction:column;gap:9px">
+<div style="background:#d6f24b;color:#111310;text-align:center;font:400 15px var(--font-heading);padding:16px 0;border-radius:999px">Take another photo</div>
+<div style="display:flex;gap:9px">
+<div style="flex:1;text-align:center;box-shadow:inset 0 0 0 1.5px rgba(242,244,234,.22);border-radius:999px;padding:13px 0;font-size:13px">Rotate &amp; re-read</div>
+<div style="flex:1;text-align:center;box-shadow:inset 0 0 0 1.5px rgba(242,244,234,.22);border-radius:999px;padding:13px 0;font-size:13px">Mark letters myself</div>
+</div>
+</div>
+</div>
+</x-import>
+
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" width="{{ dw }}" height="{{ dh }}" dark="{{ yes }}" hint-size="402px,874px">
+<div style="height:100%;background:#111310;color:#f2f4ea;display:flex;flex-direction:column;padding:62px 0 34px">
+<div style="padding:6px 22px 0;font-size:12.5px;color:rgba(242,244,234,.5)">First photo read</div>
+<div style="padding:10px 22px 16px">
+<div style="font:400 28px/1.06 var(--font-heading)">This looks like<br>type, not a hand</div>
+<div style="font-size:13px;line-height:1.55;color:rgba(242,244,234,.62);margin-top:8px">Every <span style="color:#9b8bff">e</span> on the page is identical, down to the pixel. That's a printed face — we'd just be tracing someone else's font.</div>
+</div>
+<div style="margin:0 18px 14px;background:#f2f4ea;border-radius:22px;padding:18px 20px;color:#1b1d18">
+<div style="font:600 10.5px/1 var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:rgba(27,29,24,.5);margin-bottom:10px">Eight samples of “e”</div>
+<div style="display:flex;gap:9px;flex-wrap:wrap">
+<div style="width:40px;height:44px;border-radius:9px;background:rgba(155,139,255,.2);display:flex;align-items:center;justify-content:center;font:400 24px var(--font-body);color:#1b1d18">e</div>
+<div style="width:40px;height:44px;border-radius:9px;background:rgba(155,139,255,.2);display:flex;align-items:center;justify-content:center;font:400 24px var(--font-body);color:#1b1d18">e</div>
+<div style="width:40px;height:44px;border-radius:9px;background:rgba(155,139,255,.2);display:flex;align-items:center;justify-content:center;font:400 24px var(--font-body);color:#1b1d18">e</div>
+<div style="width:40px;height:44px;border-radius:9px;background:rgba(155,139,255,.2);display:flex;align-items:center;justify-content:center;font:400 24px var(--font-body);color:#1b1d18">e</div>
+<div style="width:40px;height:44px;border-radius:9px;background:rgba(155,139,255,.2);display:flex;align-items:center;justify-content:center;font:400 24px var(--font-body);color:#1b1d18">e</div>
+<div style="width:40px;height:44px;border-radius:9px;background:rgba(155,139,255,.2);display:flex;align-items:center;justify-content:center;font:400 24px var(--font-body);color:#1b1d18">e</div>
+<div style="width:40px;height:44px;border-radius:9px;background:rgba(155,139,255,.2);display:flex;align-items:center;justify-content:center;font:400 24px var(--font-body);color:#1b1d18">e</div>
+<div style="width:40px;height:44px;border-radius:9px;background:rgba(155,139,255,.2);display:flex;align-items:center;justify-content:center;font:400 24px var(--font-body);color:#1b1d18">e</div>
+</div>
+<div style="border-top:1px dashed rgba(27,29,24,.3);margin-top:14px;padding-top:12px;font-size:11.5px;line-height:1.5;color:rgba(27,29,24,.65)">A handwritten page gives us eight different <em>e</em>s — that variation is what makes the font feel alive.</div>
+</div>
+<div style="flex:1"></div>
+<div style="padding:0 18px;display:flex;flex-direction:column;gap:9px">
+<div style="background:#d6f24b;color:#111310;text-align:center;font:400 15px var(--font-heading);padding:16px 0;border-radius:999px">Photograph something handwritten</div>
+<div style="text-align:center;box-shadow:inset 0 0 0 1.5px rgba(242,244,234,.22);border-radius:999px;padding:13px 0;font-size:13px">It <em>is</em> handwritten — carry on anyway</div>
+<div style="text-align:center;font-size:11.5px;color:rgba(242,244,234,.42);line-height:1.5;margin-top:2px">Very even hands do trip this. Carrying on won't cost you anything.</div>
+</div>
+</div>
+</x-import>
+
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" width="{{ dw }}" height="{{ dh }}" dark="{{ yes }}" hint-size="402px,874px">
+<div style="height:100%;background:#111310;color:#f2f4ea;display:flex;flex-direction:column;padding:62px 0 34px">
+<div style="padding:6px 22px 0;font-size:12.5px;color:rgba(242,244,234,.5)">First photo read</div>
+<div style="padding:10px 22px 14px">
+<div style="font:400 28px/1.06 var(--font-heading)">Devanagari —<br>we're not there yet</div>
+<div style="font-size:13px;line-height:1.55;color:rgba(242,244,234,.62);margin-top:8px">We read this hand clearly, but joined scripts need conjunct shaping we haven't built. Making the font now would produce broken words, so we won't pretend.</div>
+</div>
+<div style="margin:0 18px 14px;background:#f2f4ea;border-radius:22px;padding:20px;color:#1b1d18">
+<div style="font-family:Caveat,cursive;font-size:30px;line-height:1.45;color:rgba(27,29,24,.85)">आजी का पत्र</div>
+<div style="font-size:11.5px;color:rgba(27,29,24,.6);margin-top:10px">142 strokes found · 9 base characters</div>
+</div>
+<div style="margin:0 18px;display:flex;flex-direction:column;gap:8px">
+<div style="display:flex;justify-content:space-between;align-items:center;background:rgba(214,242,75,.13);border-radius:16px;padding:12px 15px;font-size:12.5px"><span>Latin, Greek, Cyrillic</span><span style="color:#d6f24b;font-weight:600">ready now</span></div>
+<div style="display:flex;justify-content:space-between;align-items:center;background:rgba(155,139,255,.14);border-radius:16px;padding:12px 15px;font-size:12.5px"><span>Devanagari, Arabic, Thai</span><span style="color:#9b8bff;font-weight:600">in progress</span></div>
+</div>
+<div style="flex:1"></div>
+<div style="padding:0 18px;display:flex;flex-direction:column;gap:9px">
+<div style="background:#d6f24b;color:#111310;text-align:center;font:400 15px var(--font-heading);padding:16px 0;border-radius:999px">Tell me when Devanagari lands</div>
+<div style="text-align:center;box-shadow:inset 0 0 0 1.5px rgba(242,244,234,.22);border-radius:999px;padding:13px 0;font-size:13px">Keep the photo in my library</div>
+<div style="text-align:center;font-size:11.5px;color:rgba(242,244,234,.42);line-height:1.5;margin-top:2px">Your page stays on the device. Nothing was charged.</div>
+</div>
+</div>
+</x-import>
+
+</div>
+<div class="dv-cap">No letters found — three named causes, one of which needs no new photo · printed type refused with the evidence shown, and an override · unsupported script declined honestly rather than half-made.</div>
+</div>
+
+<div class="dv-opt" id="7c">
+<div class="dv-olabel"><a class="dv-oid" href="#7c">7c</a>Partial read — enough to start, not enough to finish</div>
+<div class="dv-row">
+
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" width="{{ dw }}" height="{{ dh }}" dark="{{ yes }}" hint-size="402px,874px">
+<div style="height:100%;background:#111310;color:#f2f4ea;display:flex;flex-direction:column;padding:62px 0 34px">
+<div style="padding:6px 22px 0;font-size:12.5px;color:rgba(242,244,234,.5)">First photo read</div>
+<div style="padding:8px 22px 16px;display:flex;align-items:flex-end;gap:12px">
+<div style="font:400 64px/0.88 var(--font-heading);color:#9b8bff">9</div>
+<div style="font-size:13.5px;line-height:1.35;color:rgba(242,244,234,.7);padding-bottom:8px">of 52 glyphs<br>a shopping list is a thin sample</div>
+</div>
+<div style="margin:0 18px 16px;height:8px;border-radius:999px;background:rgba(242,244,234,.14);overflow:hidden"><div style="width:17%;height:100%;background:#9b8bff"></div></div>
+<div style="margin:0 18px 16px;background:rgba(242,244,234,.06);border-radius:22px;padding:16px 18px">
+<div style="font:400 18px/1.15 var(--font-heading)">We can build it, but 43 letters would be invented</div>
+<div style="font-size:12.5px;line-height:1.5;color:rgba(242,244,234,.68);margin-top:6px">Guessed shapes are the reason cheap handwriting fonts look wrong. Two more pages of the same hand is usually all it takes.</div>
+</div>
+<div style="margin:0 18px;display:flex;flex-direction:column;gap:9px">
+<div style="background:#f2f4ea;color:#1b1d18;border-radius:20px;padding:15px 17px">
+<div style="display:flex;justify-content:space-between;align-items:center"><div style="font:400 17px var(--font-heading)">Add more pages</div><div style="font-size:12px;color:rgba(27,29,24,.55)">recommended</div></div>
+<div style="font-size:12px;line-height:1.45;color:rgba(27,29,24,.7);margin-top:4px">Keep photographing the same box of letters — we merge them into one hand.</div>
+</div>
+<div style="box-shadow:inset 0 0 0 1.5px rgba(242,244,234,.22);border-radius:20px;padding:15px 17px">
+<div style="font:400 17px var(--font-heading)">Copy out one line instead</div>
+<div style="font-size:12px;line-height:1.45;color:rgba(242,244,234,.62);margin-top:4px">A single pangram in the same pen fills every gap at once.</div>
+</div>
+<div style="box-shadow:inset 0 0 0 1.5px rgba(242,244,234,.22);border-radius:20px;padding:15px 17px">
+<div style="font:400 17px var(--font-heading)">Make it from nine</div>
+<div style="font-size:12px;line-height:1.45;color:rgba(242,244,234,.62);margin-top:4px">Fine for a monogram or a logo lockup. Marked <em>partial</em> in your library.</div>
+</div>
+</div>
+<div style="flex:1"></div>
+<div style="padding:0 18px"><div style="background:#d6f24b;color:#111310;text-align:center;font:400 15px var(--font-heading);padding:16px 0;border-radius:999px">Photograph another page</div></div>
+</div>
+</x-import>
+
+<div style="width:360px;padding-top:2px">
+<div style="font:400 19px/1.15 var(--font-heading);color:#201e1d;margin-bottom:10px">Where each state sits in the flow</div>
+<div style="font:400 12.5px/1.62 var(--font-body);color:rgba(32,30,29,.72)">
+<p style="margin:0 0 10px"><strong>Before the shutter</strong> — glare, blur, page not fully in frame, too dark. Advisory chips only; the shutter never locks. Clearing the problem dismisses the chip on its own, no confirmation.</p>
+<p style="margin:0 0 10px"><strong>Straight after the read</strong> — no handwriting, printed type, unsupported script. Full-screen, because the run has stopped and we owe an explanation. Each one keeps the photo so nothing is lost, and each one has a route that doesn't require a new photo where physically possible.</p>
+<p style="margin:0 0 10px"><strong>At the review gate</strong> — partial read (<a class="dv-oid" href="#7c">7c</a>). Not a failure: the font can be made, so the screen is a decision, not an apology. The <em>partial</em> badge follows the font into the library and the export sheet so it can never be quietly sold as complete.</p>
+<p style="margin:0"><strong>Not shown, same pattern:</strong> export failure (retry keeps the paid entitlement), a page whose hand doesn't match the ones already in the project (offer a separate font), and a re-snap that came back worse than the first attempt (keep the better read).</p>
+</div>
+</div>
+
+</div>
+<div class="dv-cap">Nine letters is a decision screen, not an error — with the honest cost of continuing stated in the second line.</div>
+</div>
+
+</div>
+<p class="dv-next">Try next: “motion spec for the two signature moments” · “desktop companion for kerning, variants and licence seats” · “the library screen with partial and complete fonts”</p>
+</section>
+
+<section class="dv-turn" id="t6">
+<div class="dv-thd"><a class="dv-tid" href="#t6">6</a><span class="dv-tname">Onboarding, paywall, and the fill-the-gaps loop — all in Acid Bloom</span></div>
+<p style="max-width:700px;font:400 12.5px/1.6 var(--font-body);color:rgba(32,30,29,.6);margin:-10px 0 22px">Onboarding addresses both audiences without asking them to choose a persona: the value prop leads on the artifact, and the second screen lets people say what they're digitising, which sets the review default from <a class="dv-oid" href="#t5">turn 5</a>. Pricing is one-off by default — an archive user makes two fonts, not twenty — with a subscription for people mid-project and a studio licence carrying the seats and provenance sheet. The gaps loop finally draws the step every other screen refers to.</p>
+<div class="dv-opts">
+
+<div class="dv-opt" id="6a">
+<div class="dv-olabel"><a class="dv-oid" href="#6a">6a</a>Onboarding + paywall</div>
+<div class="dv-row">
+
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" width="{{ dw }}" height="{{ dh }}" dark="{{ yes }}" hint-size="402px,874px">
+<div style="height:100%;background:#111310;color:#f2f4ea;display:flex;flex-direction:column;padding:62px 0 34px">
+<div style="padding:8px 22px 0;font:400 15px var(--font-heading);color:#d6f24b">Inkling</div>
+<div style="flex:1;position:relative;overflow:hidden;margin-top:18px">
+<div style="position:absolute;left:22px;right:22px;top:0">
+<div style="font:400 40px/1.02 var(--font-heading)">Nobody else<br>writes like<br><span style="color:#d6f24b">that.</span></div>
+<div style="font-size:14px;line-height:1.55;color:rgba(242,244,234,.65);margin-top:14px;max-width:300px">Photograph one page of handwriting — a recipe card, a letter, a founder's signature — and get a real font file back. Yours, installable, everywhere.</div>
+</div>
+<div style="position:absolute;left:34px;bottom:24px;transform:rotate(-4deg)">
+<div style="width:250px;background:#f2f4ea;border-radius:12px;padding:22px 20px;box-shadow:0 20px 46px rgba(0,0,0,.6)">
+<div style="font-family:Caveat,cursive;font-size:22px;line-height:1.6;color:#1b1d18">Grandma's apple cake<br>4 apples, peeled<br>a cup of brown sugar</div>
+</div>
+</div>
+<div style="position:absolute;right:14px;bottom:96px;display:flex;flex-direction:column;gap:8px">
+<div style="width:56px;height:56px;border-radius:14px;background:#d6f24b;color:#111310;display:flex;align-items:center;justify-content:center;font-family:Caveat,cursive;font-size:34px;transform:rotate(6deg)">a</div>
+<div style="width:56px;height:56px;border-radius:14px;background:#9b8bff;color:#111310;display:flex;align-items:center;justify-content:center;font-family:Caveat,cursive;font-size:34px;transform:rotate(-5deg)">g</div>
+</div>
+</div>
+<div style="padding:16px 22px 0;display:flex;flex-direction:column;gap:10px">
+<div style="background:#d6f24b;color:#111310;text-align:center;font:400 15px var(--font-heading);padding:16px 0;border-radius:999px">Start with a photo</div>
+<div style="text-align:center;font-size:13px;color:rgba(242,244,234,.6)">See a font made from one letter</div>
+</div>
+</div>
+</x-import>
+
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" width="{{ dw }}" height="{{ dh }}" dark="{{ yes }}" hint-size="402px,874px">
+<div style="height:100%;background:#111310;color:#f2f4ea;display:flex;flex-direction:column;padding:62px 0 34px">
+<div style="padding:6px 22px 4px;font-size:12.5px;color:rgba(242,244,234,.5)">Step 1 of 2</div>
+<div style="padding:0 22px 18px"><div style="font:400 28px/1.08 var(--font-heading)">What are you<br>turning into a font?</div><div style="font-size:13px;color:rgba(242,244,234,.6);margin-top:8px">This only sets where we start — you can change everything later.</div></div>
+<div style="flex:1;padding:0 18px;display:flex;flex-direction:column;gap:10px">
+<div style="background:rgba(214,242,75,.14);box-shadow:inset 0 0 0 2px #d6f24b;border-radius:22px;padding:16px 18px">
+<div style="display:flex;justify-content:space-between;align-items:center"><div style="font:400 19px var(--font-heading)">An archive</div><div style="width:22px;height:22px;border-radius:999px;background:#d6f24b;color:#111310;display:flex;align-items:center;justify-content:center;font-size:13px">✓</div></div>
+<div style="font-size:12.5px;color:rgba(242,244,234,.7);line-height:1.45;margin-top:5px">Recipes, journals, letters from someone. We keep the wobble and open review on the photo.</div>
+</div>
+<div style="background:rgba(242,244,234,.06);border-radius:22px;padding:16px 18px">
+<div style="font:400 19px var(--font-heading)">A brand's hand</div>
+<div style="font-size:12.5px;color:rgba(242,244,234,.6);line-height:1.45;margin-top:5px">A founder's writing as a company face. Opens the full specimen sheet and licence seats.</div>
+</div>
+<div style="background:rgba(242,244,234,.06);border-radius:22px;padding:16px 18px">
+<div style="font:400 19px var(--font-heading)">My own writing</div>
+<div style="font-size:12.5px;color:rgba(242,244,234,.6);line-height:1.45;margin-top:5px">For fun, notes and cards. Guides you letter by letter and picks variants with you.</div>
+</div>
+<div style="margin-top:auto;background:rgba(155,139,255,.14);box-shadow:inset 0 0 0 1.5px rgba(155,139,255,.4);border-radius:20px;padding:14px 16px;font-size:12px;line-height:1.5;color:rgba(242,244,234,.72)">Photos stay on your device unless you export. We never train on your handwriting.</div>
+</div>
+<div style="padding:14px 18px 0"><div style="background:#d6f24b;color:#111310;text-align:center;font:400 15px var(--font-heading);padding:16px 0;border-radius:999px">Continue</div></div>
+</div>
+</x-import>
+
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" width="{{ dw }}" height="{{ dh }}" dark="{{ yes }}" hint-size="402px,874px">
+<div style="height:100%;background:#111310;color:#f2f4ea;display:flex;flex-direction:column;padding:62px 0 34px">
+<div style="padding:6px 22px 16px">
+<div style="font:400 27px/1.06 var(--font-heading)">Your font is ready<br>to leave</div>
+<div style="font-size:13px;color:rgba(242,244,234,.62);margin-top:8px">Review and preview are free. Pay once when you want the file.</div>
+</div>
+<div style="flex:1;padding:0 18px;display:flex;flex-direction:column;gap:10px">
+<div style="background:#f2f4ea;color:#1b1d18;border-radius:24px;padding:18px 20px;position:relative">
+<div style="position:absolute;right:18px;top:-10px;background:#9b8bff;color:#111310;font-size:10.5px;font-weight:700;padding:4px 10px;border-radius:999px">Most pick this</div>
+<div style="display:flex;justify-content:space-between;align-items:baseline"><div style="font:400 21px var(--font-heading)">This font</div><div style="font:400 26px var(--font-heading)">$8</div></div>
+<div style="font-size:12.5px;color:rgba(27,29,24,.7);line-height:1.5;margin-top:6px">One-off. Full .otf, .ttf and web kit, install on all your devices, re-export forever after edits.</div>
+<div style="background:#111310;color:#d6f24b;text-align:center;font:400 14px var(--font-heading);padding:13px 0;border-radius:999px;margin-top:14px">Get Grandma's Recipe</div>
+</div>
+<div style="background:rgba(242,244,234,.06);border-radius:24px;padding:16px 20px">
+<div style="display:flex;justify-content:space-between;align-items:baseline"><div style="font:400 19px var(--font-heading)">Keeper</div><div style="font:400 19px var(--font-heading);color:#d6f24b">$4<span style="font-size:12px;color:rgba(242,244,234,.55)">/mo</span></div></div>
+<div style="font-size:12.5px;color:rgba(242,244,234,.62);line-height:1.5;margin-top:6px">Unlimited fonts and re-snaps while you work through a box of letters. Cancel and keep everything you made.</div>
+</div>
+<div style="background:rgba(242,244,234,.06);border-radius:24px;padding:16px 20px">
+<div style="display:flex;justify-content:space-between;align-items:baseline"><div style="font:400 19px var(--font-heading)">Studio licence</div><div style="font:400 19px var(--font-heading);color:#d6f24b">$149</div></div>
+<div style="font-size:12.5px;color:rgba(242,244,234,.62);line-height:1.5;margin-top:6px">Commercial use, 5 seats, variable weights on request, and a signed provenance sheet naming the hand.</div>
+</div>
+<div style="margin-top:auto;text-align:center;font-size:11.5px;color:rgba(242,244,234,.45);line-height:1.5">No subscription needed to keep a font you've bought.<br>Restore purchases</div>
+</div>
+</div>
+</x-import>
+
+</div>
+<div class="dv-cap">Value prop · what you're digitising (sets the review default) · pricing at the moment of export.</div>
+</div>
+
+<div class="dv-opt" id="6b">
+<div class="dv-olabel"><a class="dv-oid" href="#6b">6b</a>The fill-the-gaps loop</div>
+<div class="dv-row">
+
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" width="{{ dw }}" height="{{ dh }}" dark="{{ yes }}" hint-size="402px,874px">
+<div style="height:100%;background:#111310;color:#f2f4ea;display:flex;flex-direction:column;padding:62px 0 34px">
+<div style="padding:6px 22px 14px">
+<div style="font:400 27px/1.06 var(--font-heading)">Eleven letters<br>never showed up</div>
+<div style="font-size:13px;color:rgba(242,244,234,.62);margin-top:8px">Nobody writes <span style="color:#d6f24b">q</span> or <span style="color:#d6f24b">z</span> in a recipe. Write the line below once and we'll take all eleven from it.</div>
+</div>
+<div style="padding:0 18px 16px;display:grid;grid-template-columns:repeat(6,1fr);gap:8px">
+<sc-for list="{{ gapCells }}" as="g" hint-placeholder-count="11">
+<div style="{{ g.cell }}"><span style="{{ g.ink }}">{{ g.ch }}</span></div>
+</sc-for>
+</div>
+<div style="margin:0 18px;background:#f2f4ea;border-radius:20px;padding:20px;color:#1b1d18">
+<div style="font:600 10.5px/1 var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:rgba(27,29,24,.5);margin-bottom:10px">Copy this out by hand</div>
+<div style="font-family:Caveat,cursive;font-size:26px;line-height:1.5">Quick zephyrs box, “fudge!”<br>— Jack (x2) @ 7:45</div>
+<div style="border-top:1px dashed rgba(27,29,24,.3);margin-top:16px;padding-top:12px;font-size:11.5px;color:rgba(27,29,24,.6);line-height:1.45">Same pen, same paper if you still have it — it keeps the weight consistent.</div>
+</div>
+<div style="flex:1"></div>
+<div style="padding:0 18px;display:flex;flex-direction:column;gap:9px">
+<div style="background:#d6f24b;color:#111310;text-align:center;font:400 15px var(--font-heading);padding:16px 0;border-radius:999px">I've written it — snap</div>
+<div style="display:flex;gap:9px">
+<div style="flex:1;text-align:center;box-shadow:inset 0 0 0 1.5px rgba(242,244,234,.22);border-radius:999px;padding:13px 0;font-size:13px">Print worksheet</div>
+<div style="flex:1;text-align:center;box-shadow:inset 0 0 0 1.5px rgba(242,244,234,.22);border-radius:999px;padding:13px 0;font-size:13px">Skip — borrow shapes</div>
+</div>
+</div>
+</div>
+</x-import>
+
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" width="{{ dw }}" height="{{ dh }}" dark="{{ yes }}" hint-size="402px,874px">
+<div style="height:100%;background:#111310;color:#f2f4ea;display:flex;flex-direction:column;padding:62px 0 34px">
+<div style="padding:6px 22px 0;font-size:12.5px;color:rgba(242,244,234,.5)">Second photo read</div>
+<div style="padding:10px 22px 18px;display:flex;align-items:flex-end;gap:12px">
+<div style="font:400 64px/0.88 var(--font-heading);color:#d6f24b">52</div>
+<div style="font-size:13.5px;line-height:1.35;color:rgba(242,244,234,.7);padding-bottom:8px">of 52 glyphs<br>a complete alphabet</div>
+</div>
+<div style="margin:0 18px 16px;height:8px;border-radius:999px;background:rgba(242,244,234,.14);overflow:hidden"><div style="width:100%;height:100%;background:#d6f24b"></div></div>
+<div style="margin:0 18px 14px;background:#f2f4ea;border-radius:22px;padding:22px 20px;color:#1b1d18">
+<div style="font-family:Caveat,cursive;font-size:40px;line-height:1.12">quick zephyrs<br>box, fudge!</div>
+<div style="font-size:11.5px;color:rgba(27,29,24,.65);margin-top:10px">The eleven newcomers, set in the font they just completed.</div>
+</div>
+<div style="padding:0 18px;display:flex;flex-direction:column;gap:9px">
+<div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px">
+<sc-for list="{{ newGlyphs }}" as="g" hint-placeholder-count="6">
+<div style="{{ g.cell }}"><span style="{{ g.ink }}">{{ g.ch }}</span></div>
+</sc-for>
+</div>
+<div style="font-size:12px;color:rgba(242,244,234,.55);line-height:1.45">Two of them came out shaky — worth a look before you name it.</div>
+</div>
+<div style="flex:1"></div>
+<div style="padding:0 18px;display:flex;gap:10px">
+<div style="padding:15px 18px;box-shadow:inset 0 0 0 1.5px rgba(242,244,234,.22);border-radius:999px;font-size:13.5px">Review 2</div>
+<div style="flex:1;background:#d6f24b;color:#111310;text-align:center;font:400 15px var(--font-heading);padding:15px 0;border-radius:999px">Name your font</div>
+</div>
+</div>
+</x-import>
+
+</div>
+<div class="dv-cap">The prompt names what's missing and why · the re-snap closes the set and flags the two new shaky letters instead of declaring victory.</div>
+</div>
+
+</div>
+<p class="dv-next">Try next: “add the bad-photo and no-letters-found states” · “desktop companion for the studio licence” · “animate the two signature moments”</p>
+</section>
+
+<section class="dv-turn" id="t5">
+<div class="dv-thd"><a class="dv-tid" href="#t5">5</a><span class="dv-tname">Locked: Acid Bloom (<a class="dv-oid" href="#4b">4b</a>) — review, in its three modes</span></div>
+<p style="max-width:680px;font:400 12.5px/1.6 var(--font-body);color:rgba(32,30,29,.6);margin:-10px 0 22px">You were right — these aren’t competing options, they’re three modes of one screen, so all three ship behind the switcher at the top. What differs is which one opens by default: <strong>In place</strong> when the source is a photographed artifact (a recipe card, a letter) where context matters; <strong>Sheet</strong> when the font is heading for a brand kit and the whole set has to be audited; <strong>One by one</strong> on a first font, or whenever more than 8 letters came back shaky — it’s also the only mode where letter variants get chosen. Switching is free and never loses a correction. Colour does one job throughout: lime means <em>needs you</em>, violet means <em>machine confidence</em>, warm white is always the artifact.</p>
+<div class="dv-opts">
+
+<div class="dv-opt" id="5a">
+<div class="dv-olabel"><a class="dv-oid" href="#5a">5a</a>Mode: In place — default for photographed artifacts</div>
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" width="{{ dw }}" height="{{ dh }}" dark="{{ yes }}" hint-size="402px,874px">
+<div style="height:100%;background:#111310;color:#f2f4ea;display:flex;flex-direction:column;padding:62px 0 34px">
+<div style="padding:4px 22px 12px;display:flex;justify-content:space-between;align-items:center"><span style="font:400 20px var(--font-heading)">Review</span><span style="font-size:12.5px;color:rgba(242,244,234,.6)">41 of 52</span></div>
+<div style="margin:0 20px 14px;padding:3px;border-radius:999px;background:rgba(242,244,234,.08);display:flex;gap:3px"><div style="flex:1;text-align:center;padding:7px 0;border-radius:999px;font-size:11.5px;font-weight:600;background:#d6f24b;color:#111310;">In place</div><div style="flex:1;text-align:center;padding:7px 0;border-radius:999px;font-size:11.5px;color:rgba(242,244,234,.6);">Sheet</div><div style="flex:1;text-align:center;padding:7px 0;border-radius:999px;font-size:11.5px;color:rgba(242,244,234,.6);">One by one</div></div>
+<div style="flex:1;position:relative;background:#1e2119;overflow:hidden;padding:16px 14px;display:flex;align-items:flex-start">
+<div style="width:100%;background:#f2f4ea;border-radius:10px;box-shadow:0 14px 34px rgba(0,0,0,.5);padding:46px 20px 22px;font-family:Caveat,cursive;font-size:26px;line-height:1.95;color:#1b1d18">
+<div>Grandma's apple ca<span style="position:relative;display:inline-block;padding:1px 6px;margin:0 -4px;border-radius:6px;background:rgba(214,242,75,.5);box-shadow:0 0 0 2px #b4d420">k<span style="position:absolute;left:50%;transform:translateX(-50%);bottom:calc(100% + 10px);white-space:nowrap;background:#d6f24b;color:#111310;font-family:var(--font-body);font-size:11px;font-weight:600;padding:4px 9px;border-radius:999px;line-height:1.2">is this “k”?</span></span>e</div>
+<div>4 a<span style="display:inline-block;padding:1px 6px;margin:0 -4px;border-radius:6px;background:rgba(155,139,255,.24);box-shadow:0 2px 0 #6c5ce7">p</span>ples, peeled &amp; sliced</div>
+<div>a cup of <span style="display:inline-block;padding:1px 6px;margin:0 -4px;border-radius:6px;background:rgba(214,242,75,.36);box-shadow:0 2px 0 #b4d420">b</span>rown sugar</div>
+<div>a pinch of <span style="display:inline-block;padding:1px 6px;margin:0 -4px;border-radius:6px;background:rgba(155,139,255,.24);box-shadow:0 2px 0 #6c5ce7">s</span>alt, then</div>
+<div>bake until the kitchen</div>
+<div>smells like autumn —</div>
+<div style="font-size:20px;color:rgba(27,29,24,.55)">Mum's note, 1994</div>
+</div>
+</div>
+<div style="background:#111310;border-radius:28px 28px 0 0;box-shadow:0 -8px 30px rgba(0,0,0,.5);padding:18px 20px 4px;margin-top:-24px;position:relative">
+<div style="width:44px;height:4px;border-radius:999px;background:rgba(242,244,234,.28);margin:0 auto 14px"></div>
+<div style="display:flex;gap:16px;align-items:center;margin-bottom:14px">
+<div style="width:78px;height:78px;border-radius:18px;background:#f2f4ea;display:flex;align-items:center;justify-content:center;font-family:Caveat,cursive;font-size:46px;color:#1b1d18">k</div>
+<div style="flex:1">
+<div style="font:400 18px var(--font-heading);margin-bottom:3px">Line 1, word 3</div>
+<div style="font-size:12.5px;color:rgba(242,244,234,.62);line-height:1.4">We read this as <strong style="color:#d6f24b">k</strong> with 62% confidence. Two other candidates found.</div>
+</div>
+</div>
+<div style="display:flex;gap:8px;margin-bottom:14px">
+<div style="flex:1;text-align:center;padding:11px 0;border-radius:14px;background:rgba(214,242,75,.22);box-shadow:inset 0 0 0 2px #d6f24b;font-family:Caveat,cursive;font-size:26px;color:#d6f24b">k</div>
+<div style="flex:1;text-align:center;padding:11px 0;border-radius:14px;background:#f2f4ea;font-family:Caveat,cursive;font-size:26px;color:#1b1d18">h</div>
+<div style="flex:1;text-align:center;padding:11px 0;border-radius:14px;background:#f2f4ea;font-family:Caveat,cursive;font-size:26px;color:#1b1d18">lc</div>
+<div style="flex:1;text-align:center;padding:11px 0;border-radius:14px;box-shadow:inset 0 0 0 1.5px rgba(242,244,234,.22);font-size:12px;color:rgba(242,244,234,.6);display:flex;align-items:center;justify-content:center">Type it</div>
+</div>
+<div style="display:flex;gap:9px;padding-bottom:14px">
+<div style="flex:1;background:#d6f24b;color:#111310;text-align:center;font:400 14px var(--font-heading);padding:13px 0;border-radius:999px">Confirm · next of 7</div>
+<div style="padding:13px 16px;box-shadow:inset 0 0 0 1.5px rgba(242,244,234,.22);border-radius:999px;font-size:13px">Drop</div>
+</div>
+</div>
+</div>
+</x-import>
+</div>
+
+<div class="dv-opt" id="5b">
+<div class="dv-olabel"><a class="dv-oid" href="#5b">5b</a>Mode: Sheet — default for brand kits</div>
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" width="{{ dw }}" height="{{ dh }}" dark="{{ yes }}" hint-size="402px,874px">
+<div style="height:100%;background:#111310;color:#f2f4ea;display:flex;flex-direction:column;padding:62px 0 34px">
+<div style="padding:4px 20px 14px;border-bottom:1px solid rgba(242,244,234,.14)">
+<div style="display:flex;justify-content:space-between;align-items:baseline"><div style="font:400 24px var(--font-heading)">Specimen</div><div style="font-size:11.5px;color:rgba(242,244,234,.55)">Dad's Letters · v3</div></div>
+<div style="display:flex;gap:14px;margin-top:12px;font-size:11.5px">
+<span style="display:flex;align-items:center;gap:5px"><i style="width:9px;height:9px;border-radius:3px;background:#f2f4ea;display:block"></i>clean 33</span>
+<span style="display:flex;align-items:center;gap:5px"><i style="width:9px;height:9px;border-radius:3px;background:#d6f24b;display:block"></i>shaky 8</span>
+<span style="display:flex;align-items:center;gap:5px"><i style="width:9px;height:9px;border-radius:3px;background:rgba(242,244,234,.28);display:block"></i>missing 11</span>
+</div>
+</div>
+<div style="margin:0 20px 14px;padding:3px;border-radius:999px;background:rgba(242,244,234,.08);display:flex;gap:3px"><div style="flex:1;text-align:center;padding:7px 0;border-radius:999px;font-size:11.5px;color:rgba(242,244,234,.6);">In place</div><div style="flex:1;text-align:center;padding:7px 0;border-radius:999px;font-size:11.5px;font-weight:600;background:#d6f24b;color:#111310;">Sheet</div><div style="flex:1;text-align:center;padding:7px 0;border-radius:999px;font-size:11.5px;color:rgba(242,244,234,.6);">One by one</div></div>
+<div style="flex:1;overflow:hidden;padding:4px 16px 0">
+<div style="font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(242,244,234,.45);margin-bottom:8px">Lowercase</div>
+<div style="display:grid;grid-template-columns:repeat(9,1fr);gap:5px;margin-bottom:16px">
+<sc-for list="{{ acidLower }}" as="g" hint-placeholder-count="26">
+<div style="{{ g.cell }}"><span style="{{ g.ink }}">{{ g.ch }}</span></div>
+</sc-for>
+</div>
+<div style="font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(242,244,234,.45);margin-bottom:8px">Uppercase</div>
+<div style="display:grid;grid-template-columns:repeat(9,1fr);gap:5px;margin-bottom:16px">
+<sc-for list="{{ acidUpper }}" as="g" hint-placeholder-count="26">
+<div style="{{ g.cell }}"><span style="{{ g.ink }}">{{ g.ch }}</span></div>
+</sc-for>
+</div>
+<div style="font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(242,244,234,.45);margin-bottom:8px">Figures &amp; marks</div>
+<div style="display:grid;grid-template-columns:repeat(9,1fr);gap:5px">
+<sc-for list="{{ acidMarks }}" as="g" hint-placeholder-count="20">
+<div style="{{ g.cell }}"><span style="{{ g.ink }}">{{ g.ch }}</span></div>
+</sc-for>
+</div>
+</div>
+<div style="margin:14px 16px 0;background:rgba(155,139,255,.16);box-shadow:inset 0 0 0 1.5px rgba(155,139,255,.45);border-radius:22px;padding:16px 18px">
+<div style="font:400 17px var(--font-heading);color:#c9bfff;margin-bottom:4px">Almost a full alphabet</div>
+<div style="font-size:12px;color:rgba(242,244,234,.7);line-height:1.45;margin-bottom:12px">Write the 11 outlined cells anywhere and photograph it — one shot finishes the set.</div>
+<div style="background:#d6f24b;color:#111310;border-radius:999px;text-align:center;font:400 14px var(--font-heading);padding:12px 0">Print the worksheet</div>
+</div>
+</div>
+</x-import>
+</div>
+
+<div class="dv-opt" id="5c">
+<div class="dv-olabel"><a class="dv-oid" href="#5c">5c</a>Mode: One by one — default on a first font</div>
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" width="{{ dw }}" height="{{ dh }}" dark="{{ yes }}" hint-size="402px,874px">
+<div style="height:100%;background:#1e2119;color:#f2f4ea;display:flex;flex-direction:column;padding:62px 0 34px">
+<div style="padding:4px 22px 6px;display:flex;justify-content:space-between;align-items:center"><span style="font-size:12.5px;color:rgba(242,244,234,.6)">Letter 19 of 41</span><span style="font-size:12.5px;color:#d6f24b">Skip all</span></div>
+<div style="margin:0 20px 14px;padding:3px;border-radius:999px;background:rgba(242,244,234,.08);display:flex;gap:3px"><div style="flex:1;text-align:center;padding:7px 0;border-radius:999px;font-size:11.5px;color:rgba(242,244,234,.6);">In place</div><div style="flex:1;text-align:center;padding:7px 0;border-radius:999px;font-size:11.5px;color:rgba(242,244,234,.6);">Sheet</div><div style="flex:1;text-align:center;padding:7px 0;border-radius:999px;font-size:11.5px;font-weight:600;background:#d6f24b;color:#111310;">One by one</div></div>
+<div style="padding:0 22px;display:flex;gap:4px;margin-bottom:18px">
+<sc-for list="{{ acidPips }}" as="p" hint-placeholder-count="41">
+<div style="{{ p.cell }}"></div>
+</sc-for>
+</div>
+<div style="flex:1;padding:0 22px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px">
+<div style="position:relative;width:100%">
+<div style="position:absolute;inset:0;background:#f2f4ea;border-radius:26px;opacity:.25;transform:rotate(3deg)"></div>
+<div style="position:absolute;inset:0;background:#f2f4ea;border-radius:26px;opacity:.55;transform:rotate(-1.6deg)"></div>
+<div style="position:relative;width:100%;background:#f2f4ea;border-radius:26px;box-shadow:0 18px 44px rgba(0,0,0,.5);padding:24px 22px 20px;color:#1b1d18">
+<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px"><div style="font:400 18px var(--font-heading)">the letter g</div><div style="font-size:11px;font-weight:600;background:#6c5ce7;color:#f2f4ea;padding:3px 9px;border-radius:999px">3 samples</div></div>
+<div style="height:190px;border-radius:16px;background:#fff;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden">
+<div style="position:absolute;left:0;right:0;top:62px;height:1px;background:rgba(108,92,231,.35)"></div>
+<div style="position:absolute;left:0;right:0;top:130px;height:1px;background:rgba(108,92,231,.35)"></div>
+<div style="position:absolute;left:0;right:0;bottom:20px;border-top:1px dashed rgba(108,92,231,.5)"></div>
+<span style="font-family:Caveat,cursive;font-size:120px;line-height:1;color:#1b1d18;position:relative">g</span>
+</div>
+<div style="display:flex;gap:7px;margin-top:12px">
+<div style="width:48px;height:48px;border-radius:12px;background:rgba(214,242,75,.35);box-shadow:inset 0 0 0 2px #b4d420;display:flex;align-items:center;justify-content:center;font-family:Caveat,cursive;font-size:28px">g</div>
+<div style="width:48px;height:48px;border-radius:12px;background:#eceade;display:flex;align-items:center;justify-content:center;font-family:Caveat,cursive;font-size:28px;color:rgba(27,29,24,.7)">g</div>
+<div style="width:48px;height:48px;border-radius:12px;background:#eceade;display:flex;align-items:center;justify-content:center;font-family:Caveat,cursive;font-size:28px;color:rgba(27,29,24,.7)">g</div>
+<div style="flex:1;border-radius:12px;box-shadow:inset 0 0 0 1.5px rgba(27,29,24,.25);display:flex;align-items:center;justify-content:center;font-size:11.5px;color:rgba(27,29,24,.6);text-align:center;line-height:1.25">draw<br>my own</div>
+</div>
+<div style="font-size:12px;color:rgba(27,29,24,.7);margin-top:12px;line-height:1.45">Pick the <strong>g</strong> that looks most like you. We'll use the others for variety mid-word.</div>
+</div>
+</div>
+</div>
+<div style="padding:20px 22px 0;display:flex;gap:12px;align-items:center">
+<div style="width:56px;height:56px;border-radius:999px;box-shadow:inset 0 0 0 1.5px rgba(242,244,234,.25);display:flex;align-items:center;justify-content:center;font-size:19px;color:rgba(242,244,234,.7)">↺</div>
+<div style="flex:1;background:#d6f24b;color:#111310;text-align:center;font:400 15px var(--font-heading);padding:16px 0;border-radius:999px">Looks like me</div>
+<div style="width:56px;height:56px;border-radius:999px;box-shadow:inset 0 0 0 1.5px rgba(242,244,234,.25);display:flex;align-items:center;justify-content:center;font-size:19px;color:rgba(242,244,234,.7)">→</div>
+</div>
+</div>
+</x-import>
+</div>
+
+</div>
+<p class="dv-next">Try next: “add onboarding + paywall” · “show the mode switcher mid-transition” · “now the desktop companion for brand licensing”</p>
+</section>
+
+<section class="dv-turn" id="t4">
+<div class="dv-thd"><a class="dv-tid" href="#t4">4</a><span class="dv-tname">The finalists, <a class="dv-oid" href="#3b">3b</a> and <a class="dv-oid" href="#2a">2a</a>, across the whole flow</span></div>
+<p style="max-width:680px;font:400 12.5px/1.6 var(--font-body);color:rgba(32,30,29,.6);margin:-10px 0 22px">Both are dark-ground schemes, so the differences show up in the details: <a class="dv-oid" href="#4a">4a</a> uses pink for every action with lavender as the reading colour, and the paper sits warm-white against forest. <a class="dv-oid" href="#4b">4b</a> is higher contrast — lime carries actions and the violet second only appears on counts and sliders, so the photograph is the only soft thing on screen. Note where each one puts the “41 of 52” count and the uncertain-letter cells: pink-on-forest reads calmer, lime-on-black reads like a machine reporting.</p>
+<div class="dv-opts">
+<div class="dv-opt" id="4a">
+<div class="dv-olabel"><a class="dv-oid" href="#4a">4a</a>Forest ground · lavender ink · pink actions — full flow</div>
+<dc-import name="Flow Screens" pal="{{ palForest }}" hint-size="1720px,900px"></dc-import>
+</div>
+<div class="dv-opt" id="4b">
+<div class="dv-olabel"><a class="dv-oid" href="#4b">4b</a>Acid Bloom — full flow</div>
+<dc-import name="Flow Screens" pal="{{ palAcid }}" hint-size="1720px,900px"></dc-import>
+</div>
+</div>
+<p class="dv-next">Try next: “ship <a class="dv-oid" href="#4a">4a</a> and theme the three review takes to match” · “<a class="dv-oid" href="#4a">4a</a> but lime instead of pink” · “add onboarding and the paywall in <a class="dv-oid" href="#4b">4b</a>”</p>
+</section>
+
+<section class="dv-turn" id="t3">
+<div class="dv-thd"><a class="dv-tid" href="#t3">3</a><span class="dv-tname">Lavender + forest green, three accents</span></div>
+<p style="max-width:660px;font:400 12.5px/1.6 var(--font-body);color:rgba(32,30,29,.6);margin:-10px 0 22px">Lavender and forest do the structural work in all three — ground and ink — so the only variable is the accent: canary, pink, or blood orange. The camera stage is forest in every one, which is what makes the photograph feel placed rather than pasted.</p>
+<div class="dv-opts">
+<div class="dv-opt" id="3a">
+<div class="dv-olabel"><a class="dv-oid" href="#3a">3a</a>Canary accent</div>
+<dc-import name="Palette Screens" pal="{{ palCanary }}" hint-size="860px,940px"></dc-import>
+</div>
+<div class="dv-opt" id="3b">
+<div class="dv-olabel"><a class="dv-oid" href="#3b">3b</a>Flipped ground, pink accent</div>
+<dc-import name="Palette Screens" pal="{{ palForest }}" hint-size="860px,940px"></dc-import>
+</div>
+<div class="dv-opt" id="3c">
+<div class="dv-olabel"><a class="dv-oid" href="#3c">3c</a>Blood orange accent</div>
+<dc-import name="Palette Screens" pal="{{ palOrange }}" hint-size="860px,940px"></dc-import>
+</div>
+</div>
+<p class="dv-next">Try next: “roll <a class="dv-oid" href="#3a">3a</a> through all four screens and the three review takes” · “<a class="dv-oid" href="#3c">3c</a> but on the flipped forest ground from <a class="dv-oid" href="#3b">3b</a>” · “keep <a class="dv-oid" href="#3b">3b</a> and add onboarding”</p>
+</section>
+
+<section class="dv-turn" id="t2">
+<div class="dv-thd"><a class="dv-tid" href="#t2">2</a><span class="dv-tname">Three palettes for the flow in <a class="dv-oid" href="#1a">1a</a> — same layout, structure and type, colour swapped out</span></div>
+<p style="max-width:660px;font:400 12.5px/1.6 var(--font-body);color:rgba(32,30,29,.6);margin:-10px 0 22px">Each is shown on the two screens where colour has to work hardest: the camera (dark stage vs. bright chrome) and the review grid (three glyph states must stay legible side by side). Pick one and I'll roll it through all four screens and the three review takes.</p>
+<div class="dv-opts">
+<div class="dv-opt" id="2a">
+<div class="dv-olabel"><a class="dv-oid" href="#2a">2a</a>Acid Bloom</div>
+<dc-import name="Palette Screens" pal="{{ palAcid }}" hint-size="860px,940px"></dc-import>
+</div>
+<div class="dv-opt" id="2b">
+<div class="dv-olabel"><a class="dv-oid" href="#2b">2b</a>Lapsang</div>
+<dc-import name="Palette Screens" pal="{{ palLapsang }}" hint-size="860px,940px"></dc-import>
+</div>
+<div class="dv-opt" id="2c">
+<div class="dv-olabel"><a class="dv-oid" href="#2c">2c</a>Colour Sphere</div>
+<dc-import name="Palette Screens" pal="{{ palSphere }}" hint-size="860px,940px"></dc-import>
+</div>
+</div>
+<p class="dv-next">Try next: “roll <a class="dv-oid" href="#2a">2a</a> through the whole flow” · “<a class="dv-oid" href="#2c">2c</a> but swap the vermilion for the cobalt” · “one more palette, darker and stranger”</p>
+</section>
+
+<section class="dv-turn" id="t1">
+<div class="dv-thd"><a class="dv-tid" href="#t1">1</a><span class="dv-tname">Two visual treatments of the whole flow, plus three takes on glyph review</span></div>
+<div class="dv-opts">
+
+<div class="dv-opt" id="1a">
+<div class="dv-olabel"><a class="dv-oid" href="#1a">1a</a>Paper table — cream ground, the system by the book, artifacts on top of the page</div>
+<div class="dv-row">
+
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" width="{{ dw }}" height="{{ dh }}" hint-size="402px,874px">
+<div style="height:100%;background:var(--color-bg);display:flex;flex-direction:column;padding:62px 0 34px">
+<div style="padding:6px 22px 14px;display:flex;align-items:center;justify-content:space-between">
+<div><div style="font:400 27px/1.05 var(--font-heading)">New font</div><div style="font-size:12.5px;color:rgba(32,30,29,.55);margin-top:3px">Step 1 of 4 · Capture</div></div>
+<div style="width:38px;height:38px;border-radius:999px;background:var(--color-surface);display:flex;align-items:center;justify-content:center;font-size:17px;color:var(--color-accent-700)">✕</div>
+</div>
+<div style="flex:1;margin:0 18px;border-radius:var(--radius-lg);background:#3a332c;position:relative;overflow:hidden;box-shadow:var(--shadow-lg)">
+<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">
+<div style="position:relative;transform:rotate(-1.6deg)">
+<div style="width:270px;background:#fbf6ec;border-radius:14px;padding:26px 24px;box-shadow:0 18px 40px rgba(0,0,0,.35)">
+<div style="font-family:Caveat,cursive;font-size:23px;line-height:1.62;color:#2f3d4d">Grandma's apple cake<br>4 apples, peeled &amp; sliced<br>a cup of brown sugar<br>bake until the kitchen<br>smells like autumn</div>
+</div>
+<div style="position:absolute;left:-8px;right:-8px;top:-8px;bottom:-8px;border-radius:18px;box-shadow:0 0 0 2px var(--color-accent-300);pointer-events:none"></div>
+<div style="position:absolute;left:-8px;top:-34px;background:var(--color-accent);color:#fff;font-size:11.5px;font-weight:600;padding:5px 11px;border-radius:999px">5 lines · sharp</div>
+</div>
+</div>
+<div style="position:absolute;left:18px;right:18px;bottom:18px;background:rgba(32,30,29,.72);backdrop-filter:blur(8px);border-radius:var(--radius-md);padding:13px 15px;color:#f5ead8">
+<div style="font-size:13.5px;font-weight:600;margin-bottom:3px">Hold steady — flatten the page</div>
+<div style="font-size:12px;color:rgba(245,234,216,.7)">Daylight, no flash. Cursive is fine; we separate joined letters.</div>
+</div>
+</div>
+<div style="padding:18px 22px 0;display:flex;align-items:center;justify-content:space-between">
+<div style="width:52px;height:52px;border-radius:14px;background:var(--color-surface);overflow:hidden"><div style="font-family:Caveat,cursive;font-size:13px;padding:6px;color:rgba(32,30,29,.5)">last shot</div></div>
+<div style="width:74px;height:74px;border-radius:999px;background:var(--color-accent);box-shadow:0 0 0 6px var(--color-accent-200);display:flex;align-items:center;justify-content:center;color:#fff;font:400 13px var(--font-heading)">Snap</div>
+<div style="width:52px;height:52px;border-radius:999px;background:var(--color-surface);display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--color-accent-700);text-align:center;line-height:1.1">Photo<br>roll</div>
+</div>
+</div>
+</x-import>
+
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" width="{{ dw }}" height="{{ dh }}" hint-size="402px,874px">
+<div style="height:100%;background:var(--color-bg);display:flex;flex-direction:column;padding:62px 0 34px">
+<div style="padding:6px 22px 10px"><div style="font:400 27px/1.05 var(--font-heading)">Letters found</div><div style="font-size:12.5px;color:rgba(32,30,29,.55);margin-top:3px">Step 2 of 4 · tap any letter to fix it</div></div>
+<div style="margin:0 18px 14px;position:relative">
+<div style="height:118px;border-radius:var(--radius-md);background:#3a332c;position:relative;overflow:hidden">
+<div style="position:absolute;inset:0;padding:14px 16px;font-family:Caveat,cursive;font-size:19px;line-height:1.5;color:rgba(251,246,236,.34)">Grandma's apple cake — 4 apples, peeled &amp; sliced, a cup of brown sugar, bake until the kitchen smells like autumn</div>
+</div>
+<div style="position:absolute;left:0;right:0;bottom:-26px;display:flex;gap:9px;justify-content:center">
+<div style="width:52px;height:52px;border-radius:12px;background:#fff;box-shadow:var(--shadow-md);display:flex;align-items:center;justify-content:center;font-family:Caveat,cursive;font-size:31px;transform:rotate(-7deg)">a</div>
+<div style="width:52px;height:52px;border-radius:12px;background:#fff;box-shadow:var(--shadow-md);display:flex;align-items:center;justify-content:center;font-family:Caveat,cursive;font-size:31px;transform:rotate(3deg) translateY(-6px)">p</div>
+<div style="width:52px;height:52px;border-radius:12px;background:#fff;box-shadow:var(--shadow-md);display:flex;align-items:center;justify-content:center;font-family:Caveat,cursive;font-size:31px;transform:rotate(-2deg)">k</div>
+<div style="width:52px;height:52px;border-radius:12px;background:#fff;box-shadow:var(--shadow-md);display:flex;align-items:center;justify-content:center;font-family:Caveat,cursive;font-size:31px;transform:rotate(8deg) translateY(-4px)">e</div>
+</div>
+</div>
+<div style="padding:44px 22px 10px;display:flex;align-items:baseline;gap:8px">
+<div style="font:400 21px var(--font-heading);color:var(--color-accent-700)">{{ foundLabel }}</div>
+<div style="font-size:12.5px;color:rgba(32,30,29,.55)">letters read</div>
+</div>
+<div style="margin:0 22px 16px;height:8px;border-radius:999px;background:var(--color-surface);overflow:hidden"><div style="width:79%;height:100%;background:var(--color-accent)"></div></div>
+<div style="flex:1;overflow:hidden;padding:0 18px">
+<div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px">
+<sc-for list="{{ glyphs }}" as="g" hint-placeholder-count="24">
+<div style="{{ g.cell }}"><span style="{{ g.ink }}">{{ g.ch }}</span></div>
+</sc-for>
+</div>
+</div>
+<div style="padding:14px 18px 0;display:flex;gap:10px;align-items:center">
+<div style="flex:1;font-size:12px;color:rgba(32,30,29,.6);line-height:1.35">11 letters missing — write them on a scrap and snap again</div>
+<div style="background:var(--color-accent);color:#fff;font:400 14px var(--font-heading);padding:12px 18px;border-radius:999px">Fill gaps</div>
+</div>
+</div>
+</x-import>
+
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" width="{{ dw }}" height="{{ dh }}" hint-size="402px,874px">
+<div style="height:100%;background:var(--color-bg);display:flex;flex-direction:column;padding:62px 0 34px">
+<div style="padding:6px 22px 12px"><div style="font:400 27px/1.05 var(--font-heading)">Try it out</div><div style="font-size:12.5px;color:rgba(32,30,29,.55);margin-top:3px">Step 3 of 4 · type anything</div></div>
+<div style="margin:0 18px;border-radius:var(--radius-lg);background:#fbf6ec;box-shadow:var(--shadow-md);padding:24px 22px;min-height:250px;position:relative">
+<div style="font-family:Caveat,cursive;font-size:34px;line-height:1.45;color:#2f3d4d">The kitchen still smells like autumn, and I still can't read step four.</div>
+<div style="position:absolute;right:20px;bottom:18px;font-size:11px;color:rgba(32,30,29,.45)">{{ fontName }} · 34pt</div>
+</div>
+<div style="padding:20px 22px 8px;font-size:12.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:rgba(32,30,29,.5)">Character</div>
+<div style="padding:0 18px;display:flex;flex-direction:column;gap:11px">
+<div style="display:flex;gap:9px">
+<div style="flex:1;background:var(--color-accent-200);border:1px solid var(--color-accent-400);border-radius:999px;padding:11px 0;text-align:center;font-size:13px;font-weight:600;color:var(--color-accent-800)">As written</div>
+<div style="flex:1;background:var(--color-surface);border-radius:999px;padding:11px 0;text-align:center;font-size:13px;color:rgba(32,30,29,.65)">Tidied</div>
+<div style="flex:1;background:var(--color-surface);border-radius:999px;padding:11px 0;text-align:center;font-size:13px;color:rgba(32,30,29,.65)">Bolder</div>
+</div>
+<div style="background:var(--color-surface);border-radius:var(--radius-md);padding:14px 16px">
+<div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:9px"><span style="font-weight:600">Slant</span><span style="color:rgba(32,30,29,.55)">as written · 4°</span></div>
+<div style="height:6px;border-radius:999px;background:var(--color-neutral-300);position:relative"><div style="position:absolute;left:0;top:0;bottom:0;width:44%;background:var(--color-accent-2-500);border-radius:999px"></div><div style="position:absolute;left:44%;top:-7px;width:20px;height:20px;border-radius:999px;background:#fff;box-shadow:var(--shadow-sm);transform:translateX(-50%)"></div></div>
+<div style="display:flex;justify-content:space-between;font-size:12.5px;margin:16px 0 9px"><span style="font-weight:600">Letter spacing</span><span style="color:rgba(32,30,29,.55)">roomy</span></div>
+<div style="height:6px;border-radius:999px;background:var(--color-neutral-300);position:relative"><div style="position:absolute;left:0;top:0;bottom:0;width:68%;background:var(--color-accent-2-500);border-radius:999px"></div><div style="position:absolute;left:68%;top:-7px;width:20px;height:20px;border-radius:999px;background:#fff;box-shadow:var(--shadow-sm);transform:translateX(-50%)"></div></div>
+</div>
+</div>
+<div style="flex:1"></div>
+<div style="padding:0 18px;display:flex;gap:10px">
+<div style="flex:1;background:var(--color-accent);color:#fff;font:400 15px var(--font-heading);padding:15px 0;border-radius:999px;text-align:center">Name &amp; save</div>
+</div>
+</div>
+</x-import>
+
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" width="{{ dw }}" height="{{ dh }}" hint-size="402px,874px">
+<div style="height:100%;background:var(--color-bg);display:flex;flex-direction:column;padding:62px 0 34px">
+<div style="padding:6px 22px 14px;display:flex;align-items:flex-end;justify-content:space-between">
+<div><div style="font:400 27px/1.05 var(--font-heading)">My fonts</div><div style="font-size:12.5px;color:rgba(32,30,29,.55);margin-top:3px">3 faces · 1 drying</div></div>
+<div style="width:40px;height:40px;border-radius:999px;background:var(--color-accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;line-height:0">+</div>
+</div>
+<div style="flex:1;overflow:hidden;padding:0 18px;display:flex;flex-direction:column;gap:12px">
+<div style="background:#fff;border-radius:var(--radius-lg);padding:18px 20px;box-shadow:var(--shadow-md);border:1px solid var(--color-accent-300)">
+<div style="display:flex;justify-content:space-between;align-items:baseline"><div style="font:400 19px var(--font-heading)">{{ fontName }}</div><div style="font-size:10.5px;font-weight:600;background:var(--color-accent-2-200);color:var(--color-accent-2-800);padding:3px 9px;border-radius:999px">Installed</div></div>
+<div style="font-family:Caveat,cursive;font-size:31px;color:#2f3d4d;margin:10px 0 6px">Handwritten, at last</div>
+<div style="font-size:11.5px;color:rgba(32,30,29,.5)">52 glyphs · from 3 photos · 12 Sept</div>
+<div style="display:flex;gap:8px;margin-top:14px">
+<div style="flex:1;background:var(--color-accent);color:#fff;text-align:center;font:400 13px var(--font-heading);padding:10px 0;border-radius:999px">Export .otf</div>
+<div style="flex:1;border:1px solid var(--color-divider);text-align:center;font:400 13px var(--font-heading);padding:10px 0;border-radius:999px">Share</div>
+</div>
+</div>
+<div style="background:var(--color-surface);border-radius:var(--radius-lg);padding:16px 20px">
+<div style="display:flex;justify-content:space-between;align-items:baseline"><div style="font:400 17px var(--font-heading)">Dad's Letters</div><div style="font-size:11px;color:rgba(32,30,29,.5)">41/52</div></div>
+<div style="font-family:Caveat,cursive;font-size:25px;color:rgba(47,61,77,.75);margin-top:6px">still drying — 11 to go</div>
+</div>
+<div style="background:var(--color-surface);border-radius:var(--radius-lg);padding:16px 20px">
+<div style="display:flex;justify-content:space-between;align-items:baseline"><div style="font:400 17px var(--font-heading)">Studio Signature</div><div style="font-size:11px;color:rgba(32,30,29,.5)">brand kit</div></div>
+<div style="font-family:Caveat,cursive;font-size:25px;color:rgba(47,61,77,.75);margin-top:6px">licensed to 4 seats</div>
+</div>
+<div style="margin-top:auto;background:#fbf6ec;border-radius:var(--radius-lg);padding:16px 18px;border:1px dashed var(--color-neutral-400)">
+<div style="font-size:13px;font-weight:600;margin-bottom:4px">Where it works</div>
+<div style="font-size:12px;color:rgba(32,30,29,.6);line-height:1.45">Installed on this iPhone. Also grab .ttf, .otf or a web kit for Figma, Word and your site.</div>
+</div>
+</div>
+</div>
+</x-import>
+
+</div>
+<div class="dv-cap">Four screens, left to right: capture guidance · letters lifting off the photo · type-to-test · library &amp; export.</div>
+</div>
+
+<div class="dv-opt" id="1b">
+<div class="dv-olabel"><a class="dv-oid" href="#1b">1b</a>Ink table — dark ground, one continuous canvas, sheets slide up over the work</div>
+<div class="dv-row">
+
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" width="{{ dw }}" height="{{ dh }}" dark="{{ yes }}" hint-size="402px,874px">
+<div style="height:100%;background:#201e1d;display:flex;flex-direction:column;padding:62px 0 34px;color:#f5ead8">
+<div style="padding:4px 22px 12px;display:flex;justify-content:space-between;align-items:center">
+<div style="font:400 15px var(--font-heading);color:var(--color-accent-300)">Inkling</div>
+<div style="font-size:12px;color:rgba(245,234,216,.5)">Cancel</div>
+</div>
+<div style="flex:1;position:relative;overflow:hidden">
+<div style="position:absolute;inset:0;display:flex;align-items:flex-start;justify-content:center;padding-top:24px">
+<div style="width:300px;background:#f0e7d6;border-radius:8px;padding:30px 26px;box-shadow:0 24px 60px rgba(0,0,0,.6)">
+<div style="font-family:Caveat,cursive;font-size:25px;line-height:1.6;color:#3a4a5c">Dear Ellen,<br>the pear tree finally<br>took. I've kept the<br>letters you sent —<br>all forty of them.</div>
+</div>
+</div>
+<div style="position:absolute;left:0;right:0;bottom:0;background:linear-gradient(to top,#201e1d 62%,rgba(32,30,29,0));padding:70px 22px 22px">
+<div style="font:400 30px/1.08 var(--font-heading);margin-bottom:8px">Fill the frame<br>with one page</div>
+<div style="font-size:13px;color:rgba(245,234,216,.62);line-height:1.5;max-width:290px">Every extra page you add sharpens the shapes. Three is plenty for a full alphabet.</div>
+<div style="display:flex;gap:8px;margin-top:16px">
+<div style="font-size:11.5px;padding:6px 12px;border-radius:999px;background:rgba(198,113,57,.22);color:var(--color-accent-300);border:1px solid rgba(198,113,57,.45)">✓ flat</div>
+<div style="font-size:11.5px;padding:6px 12px;border-radius:999px;background:rgba(122,138,94,.22);color:var(--color-accent-2-300);border:1px solid rgba(122,138,94,.45)">✓ sharp</div>
+<div style="font-size:11.5px;padding:6px 12px;border-radius:999px;background:rgba(245,234,216,.08);color:rgba(245,234,216,.5)">shadow on corner</div>
+</div>
+</div>
+</div>
+<div style="padding:20px 22px 0;display:flex;align-items:center;gap:16px">
+<div style="flex:1;font-size:12px;color:rgba(245,234,216,.45)">Page 1 of 3</div>
+<div style="width:70px;height:70px;border-radius:999px;border:3px solid rgba(245,234,216,.35);display:flex;align-items:center;justify-content:center"><div style="width:56px;height:56px;border-radius:999px;background:var(--color-accent-300)"></div></div>
+<div style="flex:1;text-align:right;font-size:12px;color:var(--color-accent-300)">Import</div>
+</div>
+</div>
+</x-import>
+
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" width="{{ dw }}" height="{{ dh }}" dark="{{ yes }}" hint-size="402px,874px">
+<div style="height:100%;background:#201e1d;display:flex;flex-direction:column;padding:62px 0 34px;color:#f5ead8">
+<div style="padding:4px 22px 10px;font-size:12px;color:rgba(245,234,216,.5)">Reading your page…</div>
+<div style="position:relative;height:230px;margin:0 0 4px;overflow:hidden">
+<div style="position:absolute;inset:0;padding:16px 22px;font-family:Caveat,cursive;font-size:22px;line-height:1.65;color:rgba(240,231,214,.22)">Dear Ellen, the pear tree finally took. I've kept the letters you sent — all forty of them, and the pressed leaf.</div>
+<div style="position:absolute;left:22px;top:22px;width:34px;height:34px;border-radius:6px;border:1.5px solid var(--color-accent-300)"></div>
+<div style="position:absolute;left:96px;top:60px;width:30px;height:30px;border-radius:6px;border:1.5px solid var(--color-accent-2-300)"></div>
+<div style="position:absolute;left:210px;top:118px;width:32px;height:32px;border-radius:6px;border:1.5px solid var(--color-accent-300)"></div>
+<div style="position:absolute;right:0;left:0;bottom:0;height:70px;background:linear-gradient(to top,#201e1d,rgba(32,30,29,0))"></div>
+</div>
+<div style="padding:0 22px 14px;display:flex;align-items:flex-end;gap:12px">
+<div style="font:400 54px/0.9 var(--font-heading);color:var(--color-accent-300)">{{ foundCount }}</div>
+<div style="font-size:13px;line-height:1.35;color:rgba(245,234,216,.62);padding-bottom:6px">of 52 glyphs<br>lifted off the page</div>
+</div>
+<div style="flex:1;overflow:hidden;padding:0 16px">
+<div style="display:grid;grid-template-columns:repeat(6,1fr);gap:7px">
+<sc-for list="{{ glyphsDark }}" as="g" hint-placeholder-count="24">
+<div style="{{ g.cell }}"><span style="{{ g.ink }}">{{ g.ch }}</span></div>
+</sc-for>
+</div>
+</div>
+<div style="margin:14px 16px 0;background:#2e2b25;border-radius:24px;padding:18px 20px">
+<div style="font:400 18px var(--font-heading);margin-bottom:4px">11 letters never showed up</div>
+<div style="font-size:12.5px;color:rgba(245,234,216,.6);line-height:1.45;margin-bottom:14px">q, x, z and eight punctuation marks. Write this line and we'll take the rest from it.</div>
+<div style="background:#f0e7d6;border-radius:12px;padding:12px 14px;font-family:Caveat,cursive;font-size:21px;color:#3a4a5c">quick zephyrs box; “fudge!” (x2)</div>
+<div style="display:flex;gap:8px;margin-top:14px">
+<div style="flex:1;background:var(--color-accent-300);color:#201e1d;text-align:center;font:400 14px var(--font-heading);padding:12px 0;border-radius:999px">Snap the line</div>
+<div style="padding:12px 16px;border:1px solid rgba(245,234,216,.25);border-radius:999px;font-size:13px;color:rgba(245,234,216,.75)">Skip</div>
+</div>
+</div>
+</div>
+</x-import>
+
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" width="{{ dw }}" height="{{ dh }}" dark="{{ yes }}" hint-size="402px,874px">
+<div style="height:100%;background:#201e1d;display:flex;flex-direction:column;padding:62px 0 34px;color:#f5ead8">
+<div style="padding:4px 22px 16px;font-size:12px;color:rgba(245,234,216,.5)">Type anything · your hand, live</div>
+<div style="margin:0 16px;background:#f0e7d6;border-radius:20px;padding:26px 22px;min-height:300px;position:relative;box-shadow:0 20px 50px rgba(0,0,0,.45)">
+<div style="font-family:Caveat,cursive;font-size:36px;line-height:1.42;color:#3a4a5c">the pear tree finally took<span style="display:inline-block;width:2px;height:32px;background:var(--color-accent);vertical-align:-4px;margin-left:2px"></span></div>
+<div style="position:absolute;left:22px;right:22px;bottom:18px;display:flex;justify-content:space-between;font-size:11px;color:rgba(58,74,92,.55)"><span>Ellen's Hand · 36pt</span><span>41 glyphs live</span></div>
+</div>
+<div style="padding:18px 22px 10px;display:flex;gap:8px;overflow:hidden">
+<div style="padding:8px 14px;border-radius:999px;background:var(--color-accent-300);color:#201e1d;font-size:12.5px;font-weight:600">Aa Regular</div>
+<div style="padding:8px 14px;border-radius:999px;background:rgba(245,234,216,.1);font-size:12.5px;color:rgba(245,234,216,.7)">Aa Fast</div>
+<div style="padding:8px 14px;border-radius:999px;background:rgba(245,234,216,.1);font-size:12.5px;color:rgba(245,234,216,.7)">Aa Careful</div>
+</div>
+<div style="flex:1;padding:8px 16px 0;display:flex;flex-direction:column;gap:9px">
+<div style="display:flex;justify-content:space-between;align-items:center;background:#2e2b25;border-radius:16px;padding:14px 16px"><span style="font-size:13px">Keep the wobble</span><div style="width:44px;height:26px;border-radius:999px;background:var(--color-accent-2-500);position:relative"><div style="position:absolute;right:3px;top:3px;width:20px;height:20px;border-radius:999px;background:#f5ead8"></div></div></div>
+<div style="display:flex;justify-content:space-between;align-items:center;background:#2e2b25;border-radius:16px;padding:14px 16px"><span style="font-size:13px">Join letters up</span><div style="width:44px;height:26px;border-radius:999px;background:rgba(245,234,216,.18);position:relative"><div style="position:absolute;left:3px;top:3px;width:20px;height:20px;border-radius:999px;background:#f5ead8"></div></div></div>
+<div style="display:flex;justify-content:space-between;align-items:center;background:#2e2b25;border-radius:16px;padding:14px 16px"><span style="font-size:13px">Ink weight</span><span style="font-size:12.5px;color:var(--color-accent-300)">as written</span></div>
+</div>
+<div style="padding:16px 16px 0"><div style="background:var(--color-accent-300);color:#201e1d;text-align:center;font:400 15px var(--font-heading);padding:15px 0;border-radius:999px">Bake the font</div></div>
+</div>
+</x-import>
+
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" width="{{ dw }}" height="{{ dh }}" dark="{{ yes }}" hint-size="402px,874px">
+<div style="height:100%;background:#201e1d;display:flex;flex-direction:column;padding:62px 0 34px;color:#f5ead8">
+<div style="padding:4px 22px 18px"><div style="font:400 30px/1.05 var(--font-heading)">Ellen's Hand</div><div style="font-size:12.5px;color:rgba(245,234,216,.5);margin-top:4px">52 glyphs · ready to leave the app</div></div>
+<div style="margin:0 16px 16px;background:#f0e7d6;border-radius:20px;padding:22px;color:#3a4a5c">
+<div style="font-family:Caveat,cursive;font-size:44px;line-height:1.1">Aa Bb Cc</div>
+<div style="font-family:Caveat,cursive;font-size:20px;margin-top:8px;color:rgba(58,74,92,.75)">the quick brown fox jumps over the lazy dog 0123456789</div>
+</div>
+<div style="flex:1;padding:0 16px;display:flex;flex-direction:column;gap:9px">
+<div style="display:flex;align-items:center;gap:14px;background:#2e2b25;border-radius:16px;padding:15px 16px"><div style="width:34px;height:34px;border-radius:10px;background:rgba(198,113,57,.25);color:var(--color-accent-300);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700">OTF</div><div style="flex:1"><div style="font-size:13.5px">Desktop font</div><div style="font-size:11.5px;color:rgba(245,234,216,.5)">.otf + .ttf · Word, Figma, InDesign</div></div><span style="color:var(--color-accent-300);font-size:12.5px">Save</span></div>
+<div style="display:flex;align-items:center;gap:14px;background:#2e2b25;border-radius:16px;padding:15px 16px"><div style="width:34px;height:34px;border-radius:10px;background:rgba(122,138,94,.25);color:var(--color-accent-2-300);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700">WEB</div><div style="flex:1"><div style="font-size:13.5px">Web kit</div><div style="font-size:11.5px;color:rgba(245,234,216,.5)">woff2 + CSS snippet</div></div><span style="color:var(--color-accent-300);font-size:12.5px">Copy</span></div>
+<div style="display:flex;align-items:center;gap:14px;background:#2e2b25;border-radius:16px;padding:15px 16px"><div style="width:34px;height:34px;border-radius:10px;background:rgba(245,234,216,.12);display:flex;align-items:center;justify-content:center;font-size:15px">􀆅</div><div style="flex:1"><div style="font-size:13.5px">Install on this iPhone</div><div style="font-size:11.5px;color:rgba(245,234,216,.5)">Use it in Notes, Mail, Pages</div></div><span style="color:var(--color-accent-300);font-size:12.5px">Install</span></div>
+<div style="margin-top:6px;background:rgba(198,113,57,.14);border:1px solid rgba(198,113,57,.35);border-radius:20px;padding:16px 18px">
+<div style="font:400 17px var(--font-heading);color:var(--color-accent-300);margin-bottom:5px">Brand licence</div>
+<div style="font-size:12px;color:rgba(245,234,216,.65);line-height:1.5">Founder's hand as a company face — seats for your team, plus a signed provenance sheet for the archive.</div>
+</div>
+</div>
+<div style="padding:16px 16px 0;display:flex;gap:10px"><div style="flex:1;text-align:center;border:1px solid rgba(245,234,216,.25);border-radius:999px;padding:14px 0;font-size:13.5px">Back to review</div><div style="flex:1;text-align:center;background:var(--color-accent-300);color:#201e1d;border-radius:999px;padding:14px 0;font:400 14px var(--font-heading)">Done</div></div>
+</div>
+</x-import>
+
+</div>
+<div class="dv-cap">Same four steps, treated as one dark worktable: the page stays visible, sheets rise over it, and the count is the hero.</div>
+</div>
+
+</div>
+
+<div class="dv-opts" style="margin-top:34px">
+
+<div class="dv-opt" id="1c">
+<div class="dv-olabel"><a class="dv-oid" href="#1c">1c</a>Review, take one: fix letters in place, on the photo</div>
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" width="{{ dw }}" height="{{ dh }}" hint-size="402px,874px">
+<div style="height:100%;background:var(--color-neutral-200);display:flex;flex-direction:column;padding:62px 0 34px">
+<div style="padding:4px 22px 12px;display:flex;justify-content:space-between;align-items:center"><span style="font:400 20px var(--font-heading)">Fix in place</span><span style="font-size:12.5px;color:var(--color-accent-700)">Grid view</span></div>
+<div style="flex:1;position:relative;background:#3a332c;overflow:hidden;padding:16px 14px;display:flex;align-items:flex-start">
+<div style="width:100%;background:#f6efe1;border-radius:10px;box-shadow:0 14px 34px rgba(0,0,0,.4);padding:46px 20px 22px;font-family:Caveat,cursive;font-size:26px;line-height:1.95;color:#37485c">
+<div>Grandma's apple ca<span style="position:relative;display:inline-block;padding:1px 6px;margin:0 -4px;border-radius:6px;background:rgba(198,113,57,.28);box-shadow:0 0 0 2px var(--color-accent)">k<span style="position:absolute;left:50%;transform:translateX(-50%);bottom:calc(100% + 10px);white-space:nowrap;background:var(--color-accent);color:#fff;font-family:var(--font-body);font-size:11px;font-weight:600;padding:4px 9px;border-radius:999px;line-height:1.2">is this “k”?</span></span>e</div>
+<div>4 a<span style="display:inline-block;padding:1px 6px;margin:0 -4px;border-radius:6px;background:rgba(122,138,94,.24);box-shadow:0 2px 0 var(--color-accent-2-600)">p</span>ples, peeled &amp; sliced</div>
+<div>a cup of <span style="display:inline-block;padding:1px 6px;margin:0 -4px;border-radius:6px;background:rgba(198,113,57,.22);box-shadow:0 2px 0 var(--color-accent)">b</span>rown sugar</div>
+<div>a pinch of <span style="display:inline-block;padding:1px 6px;margin:0 -4px;border-radius:6px;background:rgba(122,138,94,.24);box-shadow:0 2px 0 var(--color-accent-2-600)">s</span>alt, then</div>
+<div>bake until the kitchen</div>
+<div>smells like autumn —</div>
+<div style="font-size:20px;color:rgba(55,72,92,.6)">Mum's note, 1994</div>
+</div>
+</div>
+<div style="background:var(--color-bg);border-radius:28px 28px 0 0;box-shadow:0 -8px 30px rgba(32,30,29,.14);padding:18px 20px 4px;margin-top:-24px;position:relative">
+<div style="width:44px;height:4px;border-radius:999px;background:var(--color-neutral-400);margin:0 auto 14px"></div>
+<div style="display:flex;gap:16px;align-items:center;margin-bottom:14px">
+<div style="width:78px;height:78px;border-radius:16px;background:#fff;box-shadow:var(--shadow-sm);display:flex;align-items:center;justify-content:center;font-family:Caveat,cursive;font-size:46px">k</div>
+<div style="flex:1">
+<div style="font:400 18px var(--font-heading);margin-bottom:3px">Line 4, word 2</div>
+<div style="font-size:12.5px;color:rgba(32,30,29,.6);line-height:1.4">We read this as <strong>k</strong> with 62% confidence. Two other candidates found.</div>
+</div>
+</div>
+<div style="display:flex;gap:8px;margin-bottom:14px">
+<div style="flex:1;text-align:center;padding:11px 0;border-radius:14px;background:var(--color-accent-200);border:1px solid var(--color-accent-400);font-family:Caveat,cursive;font-size:26px;color:var(--color-accent-900)">k</div>
+<div style="flex:1;text-align:center;padding:11px 0;border-radius:14px;background:#fff;font-family:Caveat,cursive;font-size:26px">h</div>
+<div style="flex:1;text-align:center;padding:11px 0;border-radius:14px;background:#fff;font-family:Caveat,cursive;font-size:26px">lc</div>
+<div style="flex:1;text-align:center;padding:11px 0;border-radius:14px;background:#fff;font-size:12px;color:rgba(32,30,29,.6);display:flex;align-items:center;justify-content:center">Type it</div>
+</div>
+<div style="display:flex;gap:9px;padding-bottom:14px">
+<div style="flex:1;background:var(--color-accent);color:#fff;text-align:center;font:400 14px var(--font-heading);padding:13px 0;border-radius:999px">Confirm · next of 7</div>
+<div style="padding:13px 16px;border:1px solid var(--color-divider);border-radius:999px;font-size:13px">Drop</div>
+</div>
+</div>
+</div>
+</x-import>
+<div class="dv-cap">Best for archives: the artifact stays on screen, corrections keep their context.</div>
+</div>
+
+<div class="dv-opt" id="1d">
+<div class="dv-olabel"><a class="dv-oid" href="#1d">1d</a>Review, take two: the specimen sheet</div>
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" width="{{ dw }}" height="{{ dh }}" hint-size="402px,874px">
+<div style="height:100%;background:#fbf6ec;display:flex;flex-direction:column;padding:62px 0 34px">
+<div style="padding:4px 20px 14px;border-bottom:1px solid var(--color-divider)">
+<div style="display:flex;justify-content:space-between;align-items:baseline"><div style="font:400 24px var(--font-heading)">Specimen</div><div style="font-size:11.5px;color:rgba(32,30,29,.55)">Dad's Letters · v3</div></div>
+<div style="display:flex;gap:14px;margin-top:12px;font-size:11.5px">
+<span style="display:flex;align-items:center;gap:5px"><i style="width:9px;height:9px;border-radius:3px;background:var(--color-accent-2-500);display:block"></i>clean 33</span>
+<span style="display:flex;align-items:center;gap:5px"><i style="width:9px;height:9px;border-radius:3px;background:var(--color-accent-400);display:block"></i>shaky 8</span>
+<span style="display:flex;align-items:center;gap:5px"><i style="width:9px;height:9px;border-radius:3px;background:var(--color-neutral-400);display:block"></i>missing 11</span>
+</div>
+</div>
+<div style="flex:1;overflow:hidden;padding:14px 16px 0">
+<div style="font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(32,30,29,.45);margin-bottom:8px">Lowercase</div>
+<div style="display:grid;grid-template-columns:repeat(9,1fr);gap:5px;margin-bottom:16px">
+<sc-for list="{{ specLower }}" as="g" hint-placeholder-count="26">
+<div style="{{ g.cell }}"><span style="{{ g.ink }}">{{ g.ch }}</span></div>
+</sc-for>
+</div>
+<div style="font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(32,30,29,.45);margin-bottom:8px">Uppercase</div>
+<div style="display:grid;grid-template-columns:repeat(9,1fr);gap:5px;margin-bottom:16px">
+<sc-for list="{{ specUpper }}" as="g" hint-placeholder-count="26">
+<div style="{{ g.cell }}"><span style="{{ g.ink }}">{{ g.ch }}</span></div>
+</sc-for>
+</div>
+<div style="font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(32,30,29,.45);margin-bottom:8px">Figures &amp; marks</div>
+<div style="display:grid;grid-template-columns:repeat(9,1fr);gap:5px">
+<sc-for list="{{ specMarks }}" as="g" hint-placeholder-count="14">
+<div style="{{ g.cell }}"><span style="{{ g.ink }}">{{ g.ch }}</span></div>
+</sc-for>
+</div>
+</div>
+<div style="margin:14px 16px 0;background:var(--color-accent-2-200);border-radius:22px;padding:16px 18px">
+<div style="font:400 17px var(--font-heading);color:var(--color-accent-2-900);margin-bottom:4px">Almost a full alphabet</div>
+<div style="font-size:12px;color:var(--color-accent-2-800);line-height:1.45;margin-bottom:12px">Write the 11 greyed cells anywhere and photograph it — one shot finishes the set.</div>
+<div style="background:#fff;border-radius:999px;text-align:center;font:400 14px var(--font-heading);padding:12px 0;color:var(--color-accent-2-900)">Print the worksheet</div>
+</div>
+</div>
+</x-import>
+<div class="dv-cap">Best for brand work: a whole-set audit, honest about gaps, printable worksheet.</div>
+</div>
+
+<div class="dv-opt" id="1e">
+<div class="dv-olabel"><a class="dv-oid" href="#1e">1e</a>Review, take three: one letter at a time</div>
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" width="{{ dw }}" height="{{ dh }}" hint-size="402px,874px">
+<div style="height:100%;background:var(--color-surface);display:flex;flex-direction:column;padding:62px 0 34px">
+<div style="padding:4px 22px 6px;display:flex;justify-content:space-between;align-items:center"><span style="font-size:12.5px;color:rgba(32,30,29,.6)">Letter 19 of 41</span><span style="font-size:12.5px;color:var(--color-accent-700)">Skip all</span></div>
+<div style="padding:0 22px;display:flex;gap:4px;margin-bottom:18px">
+<sc-for list="{{ pips }}" as="p" hint-placeholder-count="41">
+<div style="{{ p.cell }}"></div>
+</sc-for>
+</div>
+<div style="flex:1;padding:0 22px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px">
+<div style="position:relative;width:100%">
+<div style="position:absolute;inset:0;background:#fff;border-radius:26px;opacity:.4;transform:rotate(3deg)"></div>
+<div style="position:absolute;inset:0;background:#fff;border-radius:26px;opacity:.7;transform:rotate(-1.6deg)"></div>
+<div style="position:relative;width:100%;background:#fff;border-radius:26px;box-shadow:var(--shadow-lg);padding:24px 22px 20px">
+<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px"><div style="font:400 18px var(--font-heading)">the letter g</div><div style="font-size:11px;font-weight:600;background:var(--color-accent-200);color:var(--color-accent-800);padding:3px 9px;border-radius:999px">3 samples</div></div>
+<div style="height:190px;border-radius:16px;background:#fbf6ec;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden">
+<div style="position:absolute;left:0;right:0;top:62px;height:1px;background:var(--color-accent-300)"></div>
+<div style="position:absolute;left:0;right:0;top:130px;height:1px;background:var(--color-accent-300)"></div>
+<div style="position:absolute;left:0;right:0;bottom:20px;height:1px;background:rgba(198,113,57,.35);border-top:1px dashed var(--color-accent-300)"></div>
+<span style="font-family:Caveat,cursive;font-size:120px;line-height:1;color:#2f3d4d;position:relative">g</span>
+</div>
+<div style="display:flex;gap:7px;margin-top:12px">
+<div style="width:48px;height:48px;border-radius:12px;background:#fbf6ec;border:2px solid var(--color-accent);display:flex;align-items:center;justify-content:center;font-family:Caveat,cursive;font-size:28px">g</div>
+<div style="width:48px;height:48px;border-radius:12px;background:#fbf6ec;display:flex;align-items:center;justify-content:center;font-family:Caveat,cursive;font-size:28px;color:rgba(47,61,77,.7)">g</div>
+<div style="width:48px;height:48px;border-radius:12px;background:#fbf6ec;display:flex;align-items:center;justify-content:center;font-family:Caveat,cursive;font-size:28px;color:rgba(47,61,77,.7)">g</div>
+<div style="flex:1;border-radius:12px;border:1px dashed var(--color-neutral-400);display:flex;align-items:center;justify-content:center;font-size:11.5px;color:rgba(32,30,29,.55);text-align:center;line-height:1.25">draw<br>my own</div>
+</div>
+<div style="font-size:12px;color:rgba(32,30,29,.6);margin-top:12px;line-height:1.45">Pick the <strong>g</strong> that looks most like you. We'll use the others for variety mid-word.</div>
+</div>
+</div>
+</div>
+<div style="padding:20px 22px 0;display:flex;gap:12px;align-items:center">
+<div style="width:56px;height:56px;border-radius:999px;background:#fff;box-shadow:var(--shadow-sm);display:flex;align-items:center;justify-content:center;font-size:19px;color:var(--color-neutral-600)">↺</div>
+<div style="flex:1;background:var(--color-accent);color:#fff;text-align:center;font:400 15px var(--font-heading);padding:16px 0;border-radius:999px">Looks like me</div>
+<div style="width:56px;height:56px;border-radius:999px;background:#fff;box-shadow:var(--shadow-sm);display:flex;align-items:center;justify-content:center;font-size:19px;color:var(--color-neutral-600)">→</div>
+</div>
+</div>
+</x-import>
+<div class="dv-cap">Best for casual use: a swipeable ritual, and it's where letter variants get chosen.</div>
+</div>
+
+</div>
+<p class="dv-next">Try next: “take <a class="dv-oid" href="#1a">1a</a>'s flow but swap review for <a class="dv-oid" href="#1d">1d</a>” · “make <a class="dv-oid" href="#1b">1b</a> the direction and add onboarding + paywall” · “show the desktop companion for brand licensing”</p>
+</section>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;foundCount&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:41,&quot;tsType&quot;:&quot;number&quot;,&quot;min&quot;:20,&quot;max&quot;:52,&quot;section&quot;:&quot;Content&quot;},&quot;fontName&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Grandma's Recipe&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Content&quot;}}">
+const cellBase = 'aspect-ratio:1;border-radius:11px;display:flex;align-items:center;justify-content:center;';
+const inkBase = 'font-family:Caveat,cursive;line-height:1;';
+
+function mk(chars, states, opts) {
+  const size = opts.size || 26;
+  return chars.map((ch, i) => {
+    const st = states[i % states.length];
+    let cell, ink;
+    if (opts.dark) {
+      cell = st === 'ok' ? 'background:#2e2b25;'
+        : st === 'low' ? 'background:rgba(198,113,57,.2);box-shadow:inset 0 0 0 1px rgba(198,113,57,.5);'
+        : 'box-shadow:inset 0 0 0 1px rgba(245,234,216,.16);';
+      ink = st === 'ok' ? 'color:#f0e7d6;' : st === 'low' ? 'color:#ffc6a5;' : 'color:rgba(245,234,216,.28);';
+    } else {
+      cell = st === 'ok' ? 'background:#fff;box-shadow:var(--shadow-sm);'
+        : st === 'low' ? 'background:var(--color-accent-200);box-shadow:inset 0 0 0 1px var(--color-accent-400);'
+        : 'box-shadow:inset 0 0 0 1px var(--color-neutral-400);';
+      ink = st === 'ok' ? 'color:#2f3d4d;' : st === 'low' ? 'color:var(--color-accent-800);' : 'color:var(--color-neutral-400);';
+    }
+    return { ch, cell: cellBase + cell, ink: inkBase + ink + 'font-size:' + size + 'px;' };
+  });
+}
+
+function mkAcid(chars, states, size) {
+  return chars.map((ch, i) => {
+    const st = states[i % states.length];
+    const cell = st === 'ok' ? 'background:#f2f4ea;'
+      : st === 'low' ? 'background:rgba(214,242,75,.22);box-shadow:inset 0 0 0 2px #d6f24b;'
+      : 'box-shadow:inset 0 0 0 1.5px rgba(242,244,234,.22);';
+    const ink = st === 'ok' ? 'color:#1b1d18;' : st === 'low' ? 'color:#d6f24b;' : 'color:rgba(242,244,234,.32);';
+    return { ch, cell: cellBase + cell, ink: inkBase + ink + 'font-size:' + size + 'px;' };
+  });
+}
+
+const L = 'abcdefghijklmnopqrstuvwxyz'.split('');
+const U = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+const M = '0123456789.,;:!?&-\u2019\u201c'.split('');
+const P1 = ['ok','ok','ok','low','ok','ok','ok','ok','miss','ok','ok','low'];
+const P2 = ['ok','ok','low','ok','ok','miss','ok','ok','ok','low','ok','ok','ok','miss'];
+
+class Component extends DCLogic {
+  renderVals() {
+    const found = this.props.foundCount ?? 41;
+    return {
+      dw: 402, dh: 874, yes: true,
+      palCanary: {
+        name: 'Lavender · Forest · Canary', chromeDark: false,
+        note: 'Lavender ground, forest-green ink and stage, canary as the one bright. The Nooch pairing, cooled down.',
+        ground: '#ded4f7', ink: '#1e3d33', sub: 'rgba(30,61,51,.62)', surface: '#c9bbf0',
+        paper: '#f7f4ff', noteInk: '#1e3d33', stage: '#1e3d33',
+        accent: '#f2d038', onAccent: '#1e3d33', accent2: '#e8501f',
+        cell: '#f7f4ff', cellInk: '#1e3d33',
+        low: 'rgba(242,208,56,.45)', lowInk: '#4a3c00', lowEdge: '#f2d038',
+        missEdge: 'rgba(30,61,51,.26)', missInk: 'rgba(30,61,51,.34)',
+      },
+      palForest: {
+        name: 'Forest ground · Lavender ink · Pink', chromeDark: true,
+        note: 'Flipped: deep forest is the page, lavender is the type, and pink carries every action.',
+        ground: '#1e3d33', ink: '#e7ddfb', sub: 'rgba(231,221,251,.6)', surface: 'rgba(231,221,251,.12)',
+        paper: '#f4efff', noteInk: '#1e3d33', stage: '#15302a',
+        accent: '#f7bcd6', onAccent: '#1e3d33', accent2: '#cdb8f5',
+        cell: '#f4efff', cellInk: '#1e3d33',
+        low: 'rgba(247,188,214,.24)', lowInk: '#f7bcd6', lowEdge: '#f7bcd6',
+        missEdge: 'rgba(231,221,251,.24)', missInk: 'rgba(231,221,251,.32)',
+      },
+      palOrange: {
+        name: 'Lavender · Forest · Blood orange', chromeDark: false,
+        note: 'Same lavender and forest, but the accent is a hot orange with a violet second — the loudest of the three.',
+        ground: '#e3dbf9', ink: '#17352c', sub: 'rgba(23,53,44,.62)', surface: '#cfc2ef',
+        paper: '#fbf9ff', noteInk: '#17352c', stage: '#17352c',
+        accent: '#ea4b12', onAccent: '#fbf9ff', accent2: '#6b3fd4',
+        cell: '#fbf9ff', cellInk: '#17352c',
+        low: 'rgba(234,75,18,.18)', lowInk: '#9c2f08', lowEdge: '#f08a5e',
+        missEdge: 'rgba(23,53,44,.26)', missInk: 'rgba(23,53,44,.34)',
+      },
+      palAcid: {
+        name: 'Acid Bloom', chromeDark: true,
+        note: 'Near-black ground, acid lime as the only bright, violet as the second voice. The photo stops being the dark thing on the screen.',
+        ground: '#111310', ink: '#f2f4ea', sub: 'rgba(242,244,234,.55)', surface: 'rgba(242,244,234,.10)',
+        paper: '#f2f4ea', noteInk: '#1b1d18', stage: '#1e2119',
+        accent: '#d6f24b', onAccent: '#111310', accent2: '#9b8bff',
+        cell: '#f2f4ea', cellInk: '#1b1d18',
+        low: 'rgba(214,242,75,.22)', lowInk: '#d6f24b', lowEdge: '#d6f24b',
+        missEdge: 'rgba(242,244,234,.22)', missInk: 'rgba(242,244,234,.32)',
+      },
+      palLapsang: {
+        name: 'Lapsang', chromeDark: false,
+        note: 'Dusty rose ground, deep plum ink, teal as the action colour and a burnt red second. Soft but not sweet.',
+        ground: '#f7d9dc', ink: '#2e1622', sub: 'rgba(46,22,34,.62)', surface: '#f0c3c8',
+        paper: '#fff6f1', noteInk: '#3a2430', stage: '#2e1622',
+        accent: '#14655e', onAccent: '#fff6f1', accent2: '#b8442f',
+        cell: '#fff6f1', cellInk: '#2e1622',
+        low: 'rgba(20,101,94,.18)', lowInk: '#0d4a45', lowEdge: '#4f9b94',
+        missEdge: 'rgba(46,22,34,.26)', missInk: 'rgba(46,22,34,.32)',
+      },
+      palSphere: {
+        name: 'Colour Sphere', chromeDark: false,
+        note: 'Warm grey ground with flat primaries — hunter green stage, vermilion actions, cobalt figures, canary for anything uncertain.',
+        ground: '#e3e0d6', ink: '#14261f', sub: 'rgba(20,38,31,.62)', surface: '#d1cdbe',
+        paper: '#f7f5ee', noteInk: '#14261f', stage: '#123a2c',
+        accent: '#e0491f', onAccent: '#f7f5ee', accent2: '#1b3a8f',
+        cell: '#f7f5ee', cellInk: '#14261f',
+        low: 'rgba(255,198,42,.4)', lowInk: '#5c3a00', lowEdge: '#ffc62a',
+        missEdge: 'rgba(20,38,31,.26)', missInk: 'rgba(20,38,31,.32)',
+      },
+      foundCount: found,
+      foundLabel: found + ' of 52',
+      fontName: this.props.fontName ?? "Grandma's Recipe",
+      glyphs: mk(L.concat(['0','1','2','3']), P1, { size: 25 }),
+      glyphsDark: mk(L.slice(0, 18), P2, { size: 24, dark: true }),
+      specLower: mk(L, P1, { size: 17 }),
+      specUpper: mk(U, P2, { size: 16 }),
+      specMarks: mk(M, ['ok','ok','low','ok','miss','ok','ok'], { size: 15 }),
+      gapCells: ['q','x','z','j','v','?','!','&',';',':','\u2019'].map(ch => ({
+        ch,
+        cell: cellBase + 'background:rgba(214,242,75,.14);box-shadow:inset 0 0 0 2px #d6f24b;',
+        ink: inkBase + 'color:#d6f24b;font-size:24px;',
+      })),
+      newGlyphs: mkAcid(['q','z','x','j','!','&'], ['ok','low','ok','ok','low','ok'], 24),
+      acidLower: mkAcid(L, P1, 17),
+      acidUpper: mkAcid(U, P2, 16),
+      acidMarks: mkAcid(M, ['ok','ok','low','ok','miss','ok','ok'], 15),
+      acidPips: Array.from({ length: 41 }, (_, i) => ({
+        cell: 'flex:1;height:4px;border-radius:999px;background:' +
+          (i < 18 ? '#d6f24b' : i === 18 ? '#9b8bff' : 'rgba(242,244,234,.18)') + ';'
+      })),
+      pips: Array.from({ length: 41 }, (_, i) => ({
+        cell: 'flex:1;height:4px;border-radius:999px;background:' +
+          (i < 18 ? 'var(--color-accent)' : i === 18 ? 'var(--color-accent-700)' : 'rgba(32,30,29,.16)') + ';'
+      })),
+    };
+  }
+}
+
+</script>
+</body>
+</html>

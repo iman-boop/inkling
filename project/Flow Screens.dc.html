@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/organic-d5b635f4-4e79-4329-90ee-abf377a18601/styles.css">
+<script src="_ds/organic-d5b635f4-4e79-4329-90ee-abf377a18601/_ds_bundle.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600&display=swap">
+</helmet>
+<div style="display:flex;gap:26px">
+
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" width="{{ dw }}" height="{{ dh }}" dark="{{ chromeDark }}" hint-size="402px,874px">
+<div style="{{ sScreen }}">
+<div style="padding:6px 22px 14px;display:flex;align-items:center;justify-content:space-between">
+<div><div style="{{ sH1 }}">New font</div><div style="{{ sSub }}">Step 1 of 4 · Capture</div></div>
+<div style="{{ sChipRound }}">✕</div>
+</div>
+<div style="{{ sViewfinder }}">
+<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">
+<div style="position:relative;transform:rotate(-1.6deg)">
+<div style="{{ sPaper }}">
+<div style="{{ sNote }}">Grandma's apple cake<br>4 apples, peeled &amp; sliced<br>a cup of brown sugar<br>bake until the kitchen<br>smells like autumn</div>
+</div>
+<div style="{{ sGuide }}"></div>
+<div style="{{ sGuidePill }}">5 lines · sharp</div>
+</div>
+</div>
+<div style="{{ sHint }}">
+<div style="font-size:13.5px;font-weight:600;margin-bottom:3px">Hold steady — flatten the page</div>
+<div style="{{ sHintSub }}">Daylight, no flash. Cursive is fine; we separate joined letters.</div>
+</div>
+</div>
+<div style="padding:18px 22px 0;display:flex;align-items:center;justify-content:space-between">
+<div style="{{ sThumb }}">last shot</div>
+<div style="{{ sShutter }}">Snap</div>
+<div style="{{ sSideBtn }}">Photo<br>roll</div>
+</div>
+</div>
+</x-import>
+
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" width="{{ dw }}" height="{{ dh }}" dark="{{ chromeDark }}" hint-size="402px,874px">
+<div style="{{ sScreen }}">
+<div style="padding:6px 22px 10px"><div style="{{ sH1 }}">Letters found</div><div style="{{ sSub }}">Step 2 of 4 · tap any letter to fix it</div></div>
+<div style="margin:0 18px 14px;position:relative">
+<div style="{{ sStrip }}">
+<div style="{{ sStripText }}">Grandma's apple cake — 4 apples, peeled &amp; sliced, a cup of brown sugar, bake until the kitchen smells like autumn</div>
+</div>
+<div style="position:absolute;left:0;right:0;bottom:-26px;display:flex;gap:9px;justify-content:center">
+<div style="{{ sLift1 }}">a</div>
+<div style="{{ sLift2 }}">p</div>
+<div style="{{ sLift3 }}">k</div>
+<div style="{{ sLift4 }}">e</div>
+</div>
+</div>
+<div style="padding:44px 22px 10px;display:flex;align-items:baseline;gap:8px">
+<div style="{{ sCount }}">41 of 52</div>
+<div style="{{ sSub }}">letters read</div>
+</div>
+<div style="{{ sTrack }}"><div style="{{ sFill }}"></div></div>
+<div style="flex:1;overflow:hidden;padding:0 18px">
+<div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px">
+<sc-for list="{{ glyphs }}" as="g" hint-placeholder-count="30">
+<div style="{{ g.cell }}"><span style="{{ g.ink }}">{{ g.ch }}</span></div>
+</sc-for>
+</div>
+</div>
+<div style="padding:14px 18px 0;display:flex;gap:10px;align-items:center">
+<div style="{{ sFootNote }}">11 letters missing — write them on a scrap and snap again</div>
+<div style="{{ sCta }}">Fill gaps</div>
+</div>
+</div>
+</x-import>
+
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" width="{{ dw }}" height="{{ dh }}" dark="{{ chromeDark }}" hint-size="402px,874px">
+<div style="{{ sScreen }}">
+<div style="padding:6px 22px 12px"><div style="{{ sH1 }}">Try it out</div><div style="{{ sSub }}">Step 3 of 4 · type anything</div></div>
+<div style="{{ sSpecimen }}">
+<div style="{{ sSpecimenText }}">The kitchen still smells like autumn, and I still can't read step four.<span style="{{ sCaret }}"></span></div>
+<div style="{{ sSpecimenMeta }}">Grandma's Recipe · 34pt</div>
+</div>
+<div style="{{ sSectionLabel }}">Character</div>
+<div style="padding:0 18px;display:flex;flex-direction:column;gap:11px">
+<div style="display:flex;gap:9px">
+<div style="{{ sSegOn }}">As written</div>
+<div style="{{ sSegOff }}">Tidied</div>
+<div style="{{ sSegOff }}">Bolder</div>
+</div>
+<div style="{{ sPanel }}">
+<div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:9px"><span style="font-weight:600">Slant</span><span style="{{ sPanelVal }}">as written · 4°</span></div>
+<div style="{{ sSliderTrack }}"><div style="{{ sSlider44 }}"></div><div style="{{ sKnob44 }}"></div></div>
+<div style="display:flex;justify-content:space-between;font-size:12.5px;margin:16px 0 9px"><span style="font-weight:600">Letter spacing</span><span style="{{ sPanelVal }}">roomy</span></div>
+<div style="{{ sSliderTrack }}"><div style="{{ sSlider68 }}"></div><div style="{{ sKnob68 }}"></div></div>
+</div>
+<div style="{{ sPanel }}">
+<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:13px;font-weight:600">Keep the wobble</span><div style="{{ sToggleOn }}"><div style="{{ sToggleKnobOn }}"></div></div></div>
+</div>
+</div>
+<div style="flex:1"></div>
+<div style="padding:0 18px"><div style="{{ sCtaBlock }}">Name &amp; save</div></div>
+</div>
+</x-import>
+
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" width="{{ dw }}" height="{{ dh }}" dark="{{ chromeDark }}" hint-size="402px,874px">
+<div style="{{ sScreen }}">
+<div style="padding:6px 22px 14px;display:flex;align-items:flex-end;justify-content:space-between">
+<div><div style="{{ sH1 }}">My fonts</div><div style="{{ sSub }}">3 faces · 1 drying</div></div>
+<div style="{{ sAdd }}">+</div>
+</div>
+<div style="flex:1;overflow:hidden;padding:0 18px;display:flex;flex-direction:column;gap:12px">
+<div style="{{ sHeroCard }}">
+<div style="display:flex;justify-content:space-between;align-items:baseline"><div style="{{ sCardTitle }}">Grandma's Recipe</div><div style="{{ sBadge }}">Installed</div></div>
+<div style="{{ sCardSpecimen }}">Handwritten, at last</div>
+<div style="{{ sCardMeta }}">52 glyphs · from 3 photos · 12 Sept</div>
+<div style="display:flex;gap:8px;margin-top:14px">
+<div style="{{ sCardCta }}">Export .otf</div>
+<div style="{{ sCardCta2 }}">Share</div>
+</div>
+</div>
+<div style="{{ sSubCard }}">
+<div style="display:flex;justify-content:space-between;align-items:baseline"><div style="{{ sSubCardTitle }}">Dad's Letters</div><div style="{{ sPageMeta }}">41/52</div></div>
+<div style="{{ sSubCardSpecimen }}">still drying — 11 to go</div>
+</div>
+<div style="{{ sSubCard }}">
+<div style="display:flex;justify-content:space-between;align-items:baseline"><div style="{{ sSubCardTitle }}">Studio Signature</div><div style="{{ sPageMeta }}">brand kit</div></div>
+<div style="{{ sSubCardSpecimen }}">licensed to 4 seats</div>
+</div>
+<div style="{{ sExportRow }}"><div style="{{ sExportChip }}">OTF</div><div style="flex:1"><div style="font-size:13.5px">Desktop font</div><div style="{{ sPageMeta }}">.otf + .ttf · Word, Figma, InDesign</div></div><span style="{{ sExportAction }}">Save</span></div>
+<div style="{{ sExportRow }}"><div style="{{ sExportChip2 }}">WEB</div><div style="flex:1"><div style="font-size:13.5px">Web kit</div><div style="{{ sPageMeta }}">woff2 + CSS snippet</div></div><span style="{{ sExportAction }}">Copy</span></div>
+<div style="{{ sLicence }}">
+<div style="{{ sLicenceTitle }}">Brand licence</div>
+<div style="{{ sLicenceBody }}">Founder's hand as a company face — seats for your team, plus a signed provenance sheet for the archive.</div>
+</div>
+</div>
+</div>
+</x-import>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1720,&quot;height&quot;:900},&quot;pal&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;object&quot;}}">
+const P = {
+  chromeDark: false,
+  ground: '#f5ead8', ink: '#201e1d', sub: 'rgba(32,30,29,.55)',
+  surface: '#ebddc5', paper: '#fbf6ec', noteInk: '#2f3d4d',
+  stage: '#3a332c', accent: '#c67139', onAccent: '#fff',
+  accent2: '#7a8a5e', cell: '#fff', cellInk: '#2f3d4d',
+  low: 'rgba(198,113,57,.22)', lowInk: '#8c491a', lowEdge: '#f6a06b',
+  missEdge: 'rgba(32,30,29,.28)', missInk: 'rgba(32,30,29,.32)',
+};
+
+class Component extends DCLogic {
+  renderVals() {
+    const p = Object.assign({}, P, this.props.pal || {});
+    const lift = (rot) => 'width:52px;height:52px;border-radius:14px;background:' + p.cell +
+      ';box-shadow:0 8px 20px rgba(0,0,0,.28);display:flex;align-items:center;justify-content:center;' +
+      'font-family:Caveat,cursive;font-size:31px;color:' + p.cellInk + ';transform:' + rot + ';';
+    const states = ['ok','ok','ok','low','ok','ok','ok','ok','miss','ok','ok','low'];
+    const glyphs = 'abcdefghijklmnopqrstuvwxyz0123'.split('').map((ch, i) => {
+      const st = states[i % states.length];
+      const cell = 'aspect-ratio:1;border-radius:12px;display:flex;align-items:center;justify-content:center;' + (
+        st === 'ok' ? 'background:' + p.cell + ';box-shadow:0 1px 3px rgba(0,0,0,.14);'
+        : st === 'low' ? 'background:' + p.low + ';box-shadow:inset 0 0 0 2px ' + p.lowEdge + ';'
+        : 'box-shadow:inset 0 0 0 1.5px ' + p.missEdge + ';');
+      const ink = 'font-family:Caveat,cursive;line-height:1;font-size:25px;color:' + (
+        st === 'ok' ? p.cellInk : st === 'low' ? p.lowInk : p.missInk) + ';';
+      return { ch, cell, ink };
+    });
+    const seg = (on) => 'flex:1;text-align:center;padding:11px 0;border-radius:999px;font-size:13px;' + (on
+      ? 'background:' + p.accent + ';color:' + p.onAccent + ';font-weight:600;'
+      : 'background:' + p.surface + ';color:' + p.sub + ';');
+    const slider = (pct) => 'position:absolute;left:0;top:0;bottom:0;width:' + pct + '%;background:' + p.accent2 + ';border-radius:999px;';
+    const knob = (pct) => 'position:absolute;left:' + pct + '%;top:-7px;width:20px;height:20px;border-radius:999px;background:' + p.cell + ';box-shadow:0 1px 4px rgba(0,0,0,.3);transform:translateX(-50%);';
+    return {
+      dw: 402, dh: 874, chromeDark: !!p.chromeDark, glyphs,
+      sScreen: 'height:100%;background:' + p.ground + ';color:' + p.ink + ';display:flex;flex-direction:column;padding:62px 0 34px;',
+      sH1: 'font:400 27px/1.05 var(--font-heading);color:' + p.ink + ';',
+      sSub: 'font-size:12.5px;color:' + p.sub + ';margin-top:3px;',
+      sChipRound: 'width:38px;height:38px;border-radius:999px;background:' + p.surface + ';display:flex;align-items:center;justify-content:center;font-size:17px;color:' + p.ink + ';',
+      sViewfinder: 'flex:1;margin:0 18px;border-radius:28px;background:' + p.stage + ';position:relative;overflow:hidden;box-shadow:0 12px 32px rgba(0,0,0,.24);',
+      sPaper: 'width:270px;background:' + p.paper + ';border-radius:14px;padding:26px 24px;box-shadow:0 18px 40px rgba(0,0,0,.35);',
+      sNote: 'font-family:Caveat,cursive;font-size:23px;line-height:1.62;color:' + p.noteInk + ';',
+      sGuide: 'position:absolute;left:-8px;right:-8px;top:-8px;bottom:-8px;border-radius:18px;box-shadow:0 0 0 2px ' + p.accent + ';',
+      sGuidePill: 'position:absolute;left:-8px;top:-34px;background:' + p.accent + ';color:' + p.onAccent + ';font-size:11.5px;font-weight:600;padding:5px 11px;border-radius:999px;',
+      sHint: 'position:absolute;left:18px;right:18px;bottom:18px;background:' + p.ink + 'ee;border-radius:16px;padding:13px 15px;color:' + p.ground + ';',
+      sHintSub: 'font-size:12px;opacity:.7;',
+      sThumb: 'width:52px;height:52px;border-radius:14px;background:' + p.surface + ';font-family:Caveat,cursive;font-size:13px;padding:6px;color:' + p.sub + ';',
+      sShutter: 'width:74px;height:74px;border-radius:999px;background:' + p.accent + ';box-shadow:0 0 0 6px ' + p.low + ';display:flex;align-items:center;justify-content:center;color:' + p.onAccent + ';font:400 13px var(--font-heading);',
+      sSideBtn: 'width:52px;height:52px;border-radius:999px;background:' + p.surface + ';display:flex;align-items:center;justify-content:center;font-size:12px;color:' + p.ink + ';text-align:center;line-height:1.1;',
+      sStrip: 'height:118px;border-radius:18px;background:' + p.stage + ';position:relative;overflow:hidden;',
+      sStripText: 'position:absolute;inset:0;padding:14px 16px;font-family:Caveat,cursive;font-size:19px;line-height:1.5;color:' + p.paper + '4d;',
+      sLift1: lift('rotate(-7deg)'), sLift2: lift('rotate(3deg) translateY(-6px)'),
+      sLift3: lift('rotate(-2deg)'), sLift4: lift('rotate(8deg) translateY(-4px)'),
+      sCount: 'font:400 21px var(--font-heading);color:' + p.accent2 + ';',
+      sTrack: 'margin:0 22px 16px;height:8px;border-radius:999px;background:' + p.surface + ';overflow:hidden;',
+      sFill: 'width:79%;height:100%;background:' + p.accent + ';',
+      sFootNote: 'flex:1;font-size:12px;color:' + p.sub + ';line-height:1.35;',
+      sCta: 'background:' + p.accent + ';color:' + p.onAccent + ';font:400 14px var(--font-heading);padding:12px 18px;border-radius:999px;',
+      sCtaBlock: 'background:' + p.accent + ';color:' + p.onAccent + ';font:400 15px var(--font-heading);padding:15px 0;border-radius:999px;text-align:center;',
+      sSpecimen: 'margin:0 18px;border-radius:28px;background:' + p.paper + ';box-shadow:0 10px 26px rgba(0,0,0,.22);padding:24px 22px;min-height:250px;position:relative;',
+      sSpecimenText: 'font-family:Caveat,cursive;font-size:34px;line-height:1.45;color:' + p.noteInk + ';',
+      sCaret: 'display:inline-block;width:2px;height:30px;background:' + p.accent + ';vertical-align:-4px;margin-left:2px;',
+      sSpecimenMeta: 'position:absolute;right:20px;bottom:18px;font-size:11px;color:' + p.noteInk + '80;',
+      sSectionLabel: 'padding:20px 22px 8px;font-size:12.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:' + p.sub + ';',
+      sSegOn: seg(true), sSegOff: seg(false),
+      sPanel: 'background:' + p.surface + ';border-radius:20px;padding:14px 16px;color:' + p.ink + ';',
+      sPanelVal: 'color:' + p.sub + ';',
+      sSliderTrack: 'height:6px;border-radius:999px;background:' + p.ink + '26;position:relative;',
+      sSlider44: slider(44), sSlider68: slider(68), sKnob44: knob(44), sKnob68: knob(68),
+      sToggleOn: 'width:44px;height:26px;border-radius:999px;background:' + p.accent + ';position:relative;',
+      sToggleKnobOn: 'position:absolute;right:3px;top:3px;width:20px;height:20px;border-radius:999px;background:' + p.onAccent + ';',
+      sAdd: 'width:40px;height:40px;border-radius:999px;background:' + p.accent + ';color:' + p.onAccent + ';display:flex;align-items:center;justify-content:center;font-size:22px;line-height:0;',
+      sHeroCard: 'background:' + p.cell + ';border-radius:28px;padding:18px 20px;box-shadow:0 6px 18px rgba(0,0,0,.16);color:' + p.cellInk + ';',
+      sCardTitle: 'font:400 19px var(--font-heading);',
+      sBadge: 'font-size:10.5px;font-weight:600;background:' + p.accent + ';color:' + p.onAccent + ';padding:3px 9px;border-radius:999px;',
+      sCardSpecimen: 'font-family:Caveat,cursive;font-size:31px;color:' + p.noteInk + ';margin:10px 0 6px;',
+      sCardMeta: 'font-size:11.5px;color:' + p.cellInk + 'a6;',
+      sPageMeta: 'font-size:11.5px;color:' + p.sub + ';',
+      sCardCta: 'flex:1;background:' + p.accent + ';color:' + p.onAccent + ';text-align:center;font:400 13px var(--font-heading);padding:10px 0;border-radius:999px;',
+      sCardCta2: 'flex:1;box-shadow:inset 0 0 0 1px ' + p.missEdge + ';text-align:center;font:400 13px var(--font-heading);padding:10px 0;border-radius:999px;',
+      sSubCard: 'background:' + p.surface + ';border-radius:24px;padding:14px 18px;',
+      sSubCardTitle: 'font:400 17px var(--font-heading);color:' + p.ink + ';',
+      sSubCardSpecimen: 'font-family:Caveat,cursive;font-size:24px;color:' + p.ink + 'b3;margin-top:4px;',
+      sExportRow: 'display:flex;align-items:center;gap:14px;background:' + p.surface + ';border-radius:20px;padding:13px 16px;',
+      sExportChip: 'width:34px;height:34px;border-radius:11px;background:' + p.low + ';color:' + p.lowInk + ';display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;',
+      sExportChip2: 'width:34px;height:34px;border-radius:11px;background:' + p.accent2 + '33;color:' + p.accent2 + ';display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;',
+      sExportAction: 'font-size:12.5px;color:' + p.accent + ';font-weight:600;',
+      sLicence: 'margin-top:auto;background:' + p.accent + '1f;box-shadow:inset 0 0 0 1.5px ' + p.accent + '59;border-radius:24px;padding:15px 18px;',
+      sLicenceTitle: 'font:400 17px var(--font-heading);color:' + p.ink + ';margin-bottom:4px;',
+      sLicenceBody: 'font-size:12px;line-height:1.5;color:' + p.sub + ';',
+    };
+  }
+}
+
+</script>
+</body>
+</html>
