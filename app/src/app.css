@@ -221,13 +221,33 @@ textarea {
   opacity: 0.5;
 }
 
+.bench-links {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
 .bench-stage {
   flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 14px;
   padding-top: 6px;
+}
+
+/* The phone is a fixed 402×874 object. On a narrow screen it scales down as a
+   whole rather than reflowing — the layout inside it is the design. */
+.bench-slot {
+  --phone-scale: 1;
+  height: calc(874px * var(--phone-scale));
+  width: calc(402px * var(--phone-scale));
+}
+
+.bench-device {
+  transform: scale(var(--phone-scale));
+  transform-origin: top left;
 }
 
 .bench-caption {
@@ -245,9 +265,36 @@ textarea {
     padding: 20px 16px 48px;
   }
 
+  /* The phone comes first on a phone; the screen list follows it. */
+  .bench-stage {
+    order: 1;
+  }
+
   .bench-rail {
+    order: 2;
     position: static;
     width: 100%;
-    max-width: 402px;
+    max-width: 440px;
+  }
+
+  .bench-links {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .bench-link {
+    width: auto;
+    box-shadow: inset 0 0 0 1px rgba(32, 30, 29, 0.16);
+  }
+
+  .bench-link small {
+    margin-left: 4px;
+  }
+}
+
+@media (max-width: 470px) {
+  .bench-slot {
+    --phone-scale: calc((100vw - 36px) / 402);
   }
 }

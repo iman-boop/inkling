@@ -202,17 +202,19 @@ function Workbench() {
         {GROUPS.map((group) => (
           <div key={group}>
             <div className="bench-group">{group}</div>
-            {SCREENS.filter((s) => s.group === group).map((s) => (
-              <button
-                key={s.id}
-                className="bench-link"
-                aria-current={s.id === screen}
-                onClick={() => go(s.id)}
-              >
-                {s.label}
-                <small>{s.ref}</small>
-              </button>
-            ))}
+            <div className="bench-links">
+              {SCREENS.filter((s) => s.group === group).map((s) => (
+                <button
+                  key={s.id}
+                  className="bench-link"
+                  aria-current={s.id === screen}
+                  onClick={() => go(s.id)}
+                >
+                  {s.label}
+                  <small>{s.ref}</small>
+                </button>
+              ))}
+            </div>
           </div>
         ))}
 
@@ -232,13 +234,17 @@ function Workbench() {
       </div>
 
       <div className="bench-stage">
-        <IOSDevice dark={!entry.light}>
-          {/* Remounting per screen keeps each screen's own motion honest: the
-              lift plays once per page, not once per app. */}
-          <div key={entry.id} style={{ height: '100%' }}>
-            {entry.render()}
+        <div className="bench-slot">
+          <div className="bench-device">
+            <IOSDevice dark={!entry.light}>
+              {/* Remounting per screen keeps each screen's own motion honest:
+                  the lift plays once per page, not once per app. */}
+              <div key={entry.id} style={{ height: '100%' }}>
+                {entry.render()}
+              </div>
+            </IOSDevice>
           </div>
-        </IOSDevice>
+        </div>
         <p className="bench-caption">{entry.caption}</p>
       </div>
     </div>
