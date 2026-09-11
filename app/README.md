@@ -94,6 +94,25 @@ decide something the mockups left open, all of them cheap to reverse.
   glyphs really lifted off a photograph. Every place it appears is content, never brand
   type.
 
+## Your own page
+
+The capture screen takes a real photograph. The shutter hands off to the phone's camera
+(`capture="environment"` — more reliable inside an embedded page than a live viewfinder,
+and it's what people expect a shutter to do), **Photo roll** opens the library, and
+**Sample page** walks the flow on the drawn artifact with no photograph at all. What you
+pick then carries through the capture screen, the last-shot thumbnail and the read, where
+the lift runs over it. The photo never leaves the device: it lives as an object URL,
+released when it's replaced or the flow is reset.
+
+Detection is *not* wired up, and the screens say so rather than implying otherwise — this
+is the one place where a convincing demo would be a lie about what the product does:
+
+- the read is labelled **demo read** against a **sample set**;
+- the lift rises from points spread across the photograph, not from located letters;
+- review stays on the sample page and says why. A highlight has to enclose the letter it
+  marks, and we can't find letters in a photograph yet, so the alternative would be
+  drawing confident boxes over someone's handwriting at random.
+
 ## Not built
 
 - Real glyph extraction. There is no model here; the app is the interface around one, and
