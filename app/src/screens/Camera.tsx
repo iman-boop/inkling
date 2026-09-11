@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react'
+import { usePhotoPicker } from '../components/PhotoPicker'
 import { Hand, Screen } from '../components/ui'
 import { acid, font } from '../lib/theme'
 import { useStore } from '../state/store'
@@ -11,7 +13,11 @@ export type Condition = 'clear' | 'glare' | 'blur'
  * fragile letter under bad light may have no better option.
  */
 export function Camera({ condition = 'clear' }: { condition?: Condition }) {
-  const { go } = useStore()
+  const { go, photo, setPhoto } = useStore()
+  const { inputs, openCamera, openLibrary } = usePhotoPicker((file) => {
+    setPhoto(file)
+    go('reading')
+  })
 
   return (
     <Screen background={condition === 'clear' ? acid.ground : acid.camera}>
@@ -45,7 +51,7 @@ export function Camera({ condition = 'clear' }: { condition?: Condition }) {
                 : acid.stage,
         }}
       >
-        {condition === 'clear' ? <ClearFrame /> : null}
+        {condition === 'clear' ? photo ? <PhotoFrame url={photo} /> : <ClearFrame /> : null}
         {condition === 'glare' ? <GlareFrame /> : null}
         {condition === 'blur' ? <BlurFrame /> : null}
       </div>
@@ -62,11 +68,35 @@ export function Camera({ condition = 'clear' }: { condition?: Condition }) {
           justifyContent: 'space-between',
         }}
       >
-        <div style={{ fontSize: 12.5, color: 'rgba(242,244,234,.5)', width: 96 }}>
-          {condition === 'glare' ? 'Shoot anyway' : condition === 'blur' ? 'Photos' : 'Last shot'}
+        <div style={{ width: 96, display: 'flex', justifyContent: 'flex-start' }}>
+          {condition === 'blur' ? (
+            <SideButton onClick={openLibrary}>Photos</SideButton>
+          ) : condition === 'glare' ? (
+            <SideButton onClick={() => go('reading')}>Shoot anyway</SideButton>
+          ) : photo ? (
+            <button
+              onClick={() => go('reading')}
+              aria-label="Use the last shot"
+              style={{
+                width: 52,
+                height: 52,
+                borderRadius: 14,
+                overflow: 'hidden',
+                boxShadow: 'inset 0 0 0 1.5px rgba(242,244,234,.3)',
+              }}
+            >
+              <img
+                src={photo}
+                alt=""
+                style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+              />
+            </button>
+          ) : (
+            <SideButton onClick={() => go('reading')}>Sample page</SideButton>
+          )}
         </div>
         <button
-          onClick={() => go('reading')}
+          onClick={openCamera}
           aria-label="Take the photo"
           style={{
             width: 70,
@@ -93,11 +123,54 @@ export function Camera({ condition = 'clear' }: { condition?: Condition }) {
             }}
           />
         </button>
-        <div style={{ width: 96, textAlign: 'right', fontSize: 12.5, color: 'rgba(242,244,234,.5)' }}>
-          Flash off
+        <div style={{ width: 96, display: 'flex', justifyContent: 'flex-end' }}>
+          {condition === 'clear' ? (
+            <SideButton onClick={openLibrary}>Photo roll</SideButton>
+          ) : (
+            <span style={{ fontSize: 12.5, color: 'rgba(242,244,234,.5)' }}>Flash off</span>
+          )}
         </div>
       </div>
+      {inputs}
     </Screen>
+  )
+}
+
+function SideButton({ children, onClick }: { children: ReactNode; onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      style={{
+        fontSize: 12.5,
+        color: 'rgba(242,244,234,.7)',
+        padding: '6px 0',
+        transition: 'color 120ms cubic-bezier(.22,1,.36,1)',
+      }}
+    >
+      {children}
+    </button>
+  )
+}
+
+/** The page they actually photographed or chose, framed by the guide. */
+function PhotoFrame({ url }: { url: string }) {
+  return (
+    <>
+      <img
+        src={url}
+        alt="The page you photographed"
+        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+      />
+      <div
+        style={{
+          position: 'absolute',
+          inset: 14,
+          borderRadius: 18,
+          boxShadow: `0 0 0 2px ${acid.lime}`,
+          pointerEvents: 'none',
+        }}
+      />
+    </>
   )
 }
 

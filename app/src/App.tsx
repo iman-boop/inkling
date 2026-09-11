@@ -190,6 +190,16 @@ function Workbench() {
     window.location.hash = screen
   }, [screen])
 
+  // So the browser's own back button, and a pasted link, move the phone.
+  useEffect(() => {
+    const onHashChange = () => {
+      const id = window.location.hash.slice(1)
+      if (isScreenId(id) && id !== screen) go(id)
+    }
+    window.addEventListener('hashchange', onHashChange)
+    return () => window.removeEventListener('hashchange', onHashChange)
+  }, [screen, go])
+
   return (
     <div className="bench">
       <div className="bench-rail">

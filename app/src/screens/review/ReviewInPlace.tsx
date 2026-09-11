@@ -14,7 +14,8 @@ import { useStore } from '../../state/store'
  */
 export function ReviewInPlace() {
   const store = useStore()
-  const { glyphs, resolvedMarks, resolveMark, resolve, reviewMode, setReviewMode, stats, go } = store
+  const { glyphs, resolvedMarks, resolveMark, resolve, reviewMode, setReviewMode, stats, go, photo } =
+    store
 
   const marks = useMemo(
     () => NOTE_LINES.flatMap((line) => line.map((s) => s.mark).filter(Boolean) as Mark[]),
@@ -66,6 +67,22 @@ export function ReviewInPlace() {
       </div>
 
       <ModeSwitcher mode={reviewMode} onChange={setReviewMode} />
+
+      {/* A highlight has to enclose the letter it marks, and we can't locate
+          letters in a photograph yet — so review stays on the sample page and
+          says so, rather than drawing confident boxes over someone's writing. */}
+      {photo ? (
+        <div
+          style={{
+            margin: '0 20px 12px',
+            fontSize: 11.5,
+            lineHeight: 1.4,
+            color: acid.violet,
+          }}
+        >
+          Corrections run on the sample page — your photo can't be marked up yet.
+        </div>
+      ) : null}
 
       <div
         style={{

@@ -73,6 +73,13 @@ interface Store {
   fillGaps: () => void
   gapsFilled: boolean
 
+  /**
+   * The page the person actually photographed or chose, as an object URL.
+   * Null until they take or pick one, and the sample artifact stands in.
+   */
+  photo: string | null
+  setPhoto: (file: File | null) => void
+
   /** Marks on the photo that have had a decision. */
   resolvedMarks: Record<string, string>
   resolveMark: (id: string, ch: string) => void
@@ -107,6 +114,7 @@ export function StoreProvider({
   const [modeOverride, setModeOverride] = useState<ReviewMode | null>(null)
   const [focusedGlyph, focusGlyph] = useState<string | null>(null)
   const [resolvedMarks, setResolvedMarks] = useState<Record<string, string>>({})
+  const [photo, setPhotoUrl] = useState<string | null>(null)
   const [fontName, setFontName] = useState("Grandma's Recipe")
   const [plan, setPlan] = useState<Plan>('once')
   const [purchased, setPurchased] = useState(false)
@@ -128,6 +136,15 @@ export function StoreProvider({
 
   const resolve = useCallback((ch: string, state: GlyphState) => {
     setGlyphs((all) => all.map((g) => (g.ch === ch ? { ...g, state } : g)))
+  }, [])
+
+  // The photo never leaves the device — it lives as an object URL for as long
+  // as this session is open, and the old one is released when it's replaced.
+  const setPhoto = useCallback((file: File | null) => {
+    setPhotoUrl((previous) => {
+      if (previous) URL.revokeObjectURL(previous)
+      return file ? URL.createObjectURL(file) : null
+    })
   }, [])
 
   const resolveMark = useCallback((id: string, ch: string) => {
@@ -157,11 +174,12 @@ export function StoreProvider({
     setModeOverride(null)
     focusGlyph(null)
     setResolvedMarks({})
+    setPhoto(null)
     setFontName("Grandma's Recipe")
     setPlan('once')
     setPurchased(false)
     setGapsFilled(false)
-  }, [initialScreen])
+  }, [initialScreen, setPhoto])
 
   const value: Store = {
     screen,
@@ -179,6 +197,8 @@ export function StoreProvider({
     resolve,
     fillGaps,
     gapsFilled,
+    photo,
+    setPhoto,
     resolvedMarks,
     resolveMark,
     fontName,
