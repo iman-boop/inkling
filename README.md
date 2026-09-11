@@ -1,3 +1,12 @@
+# Handwritten Notes to Font App
+
+**The designs in this bundle have been built: see [`app/`](app/) (React + Vite + TypeScript,
+`cd app && npm install && npm run dev`). [`app/README.md`](app/README.md) maps each screen
+back to the frame it came from and records where the implementation had to decide something
+the mockups left open.** Everything below is the original handoff note.
+
+---
+
 # CODING AGENTS: READ THIS FIRST
 
 This is a **handoff bundle** from Claude Design (claude.ai/design).
