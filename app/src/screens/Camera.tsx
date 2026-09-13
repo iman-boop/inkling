@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { usePhotoPicker } from '../components/PhotoPicker'
+import { useCamera } from '../lib/camera'
 import { Hand, Screen } from '../components/ui'
 import { acid, font } from '../lib/theme'
 import { useStore } from '../state/store'
@@ -14,10 +15,26 @@ export type Condition = 'clear' | 'glare' | 'blur'
  */
 export function Camera({ condition = 'clear' }: { condition?: Condition }) {
   const { go, photo, setPhoto } = useStore()
-  const { inputs, openCamera, openLibrary } = usePhotoPicker((file) => {
+  const usePage = (file: File) => {
     setPhoto(file)
     go('reading')
-  })
+  }
+  const { inputs, openCamera, openLibrary } = usePhotoPicker(usePage)
+
+  // The live feed runs on the real capture screen only — the glare and blur
+  // frames are drawn demonstrations of the advisories.
+  const camera = useCamera(condition === 'clear' && !photo)
+  const live = camera.state === 'live'
+
+  const shoot = async () => {
+    if (!live) {
+      // No feed: hand off to the OS camera instead.
+      openCamera()
+      return
+    }
+    const frame = await camera.capture()
+    if (frame) usePage(frame)
+  }
 
   return (
     <Screen background={condition === 'clear' ? acid.ground : acid.camera}>
@@ -51,12 +68,24 @@ export function Camera({ condition = 'clear' }: { condition?: Condition }) {
                 : acid.stage,
         }}
       >
-        {condition === 'clear' ? photo ? <PhotoFrame url={photo} /> : <ClearFrame /> : null}
+        {condition === 'clear' ? (
+          photo ? (
+            <PhotoFrame url={photo} />
+          ) : (
+            <LiveFrame videoRef={camera.videoRef} live={live} />
+          )
+        ) : null}
         {condition === 'glare' ? <GlareFrame /> : null}
         {condition === 'blur' ? <BlurFrame /> : null}
       </div>
 
-      {condition === 'clear' ? <SteadyHint /> : null}
+      {condition === 'clear' ? (
+        camera.state === 'denied' || camera.state === 'unsupported' ? (
+          <CameraAdvisory state={camera.state} onRetry={() => void camera.start()} />
+        ) : (
+          <SteadyHint />
+        )
+      ) : null}
       {condition === 'glare' ? <GlareAdvisory /> : null}
       {condition === 'blur' ? <BlurAdvisory /> : null}
 
@@ -96,7 +125,7 @@ export function Camera({ condition = 'clear' }: { condition?: Condition }) {
           )}
         </div>
         <button
-          onClick={openCamera}
+          onClick={() => void shoot()}
           aria-label="Take the photo"
           style={{
             width: 70,
@@ -149,6 +178,109 @@ function SideButton({ children, onClick }: { children: ReactNode; onClick: () =>
     >
       {children}
     </button>
+  )
+}
+
+/** What the lens sees, with the framing guide over it. */
+function LiveFrame({
+  videoRef,
+  live,
+}: {
+  videoRef: React.RefObject<HTMLVideoElement>
+  live: boolean
+}) {
+  return (
+    <>
+      <video
+        ref={videoRef}
+        playsInline
+        muted
+        autoPlay
+        style={{
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          display: 'block',
+          opacity: live ? 1 : 0,
+          transition: 'opacity 220ms cubic-bezier(.22,1,.36,1)',
+        }}
+      />
+      {live ? (
+        <div
+          style={{
+            position: 'absolute',
+            inset: 14,
+            borderRadius: 18,
+            boxShadow: `0 0 0 2px ${acid.lime}`,
+            pointerEvents: 'none',
+          }}
+        />
+      ) : (
+        // Until the feed arrives, the drawn page stands in rather than a void.
+        <div style={{ position: 'absolute', inset: 0 }}>
+          <ClearFrame />
+        </div>
+      )}
+    </>
+  )
+}
+
+/** Same pattern as the glare and blur advisories: name it, offer the way on. */
+function CameraAdvisory({
+  state,
+  onRetry,
+}: {
+  state: 'denied' | 'unsupported'
+  onRetry: () => void
+}) {
+  const denied = state === 'denied'
+  return (
+    <div
+      style={{
+        margin: '0 18px 14px',
+        background: 'rgba(155,139,255,.16)',
+        boxShadow: 'inset 0 0 0 1.5px rgba(155,139,255,.5)',
+        borderRadius: 22,
+        padding: '14px 16px',
+      }}
+    >
+      <div style={{ font: `400 17px/1.15 ${font.heading}`, color: acid.ink }}>
+        {denied ? 'No camera access here' : 'No camera on this device'}
+      </div>
+      <div
+        style={{ fontSize: 12.5, lineHeight: 1.45, marginTop: 4, color: 'rgba(242,244,234,.72)' }}
+      >
+        {denied
+          ? 'Allow the camera in your browser settings and try again — or shoot with the phone camera and come back.'
+          : 'Take the photo with your phone camera, or pick a page you have already photographed.'}
+      </div>
+      <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
+        {denied ? (
+          <button
+            className="pill pill-primary"
+            onClick={onRetry}
+            style={{
+              background: acid.ink,
+              color: acid.onAccent,
+              font: `600 12px/1 ${font.body}`,
+              padding: '9px 14px',
+              borderRadius: 999,
+            }}
+          >
+            Try again
+          </button>
+        ) : null}
+        <div
+          style={{
+            font: `600 12px/1 ${font.body}`,
+            padding: '9px 0',
+            color: 'rgba(242,244,234,.55)',
+          }}
+        >
+          The shutter still works — it opens your camera app.
+        </div>
+      </div>
+    </div>
   )
 }
 

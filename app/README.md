@@ -112,13 +112,17 @@ decide something the mockups left open, all of them cheap to reverse.
 
 ## Your own page
 
-The capture screen takes a real photograph. The shutter hands off to the phone's camera
-(`capture="environment"` — more reliable inside an embedded page than a live viewfinder,
-and it's what people expect a shutter to do), **Photo roll** opens the library, and
-**Sample page** walks the flow on the drawn artifact with no photograph at all. What you
-pick then carries through the capture screen, the last-shot thumbnail and the read, where
-the lift runs over it. The photo never leaves the device: it lives as an object URL,
-released when it's replaced or the flow is reset.
+The capture screen is a real camera. On a secure origin it opens a live feed
+(`getUserMedia`, rear camera) inside the viewfinder and the shutter grabs a frame from
+it; where there's no camera, no permission, or no secure origin it falls back to handing
+off to the OS camera (`<input capture="environment">`) and says so in the advisory slot
+the glare and blur messages use. **Photo roll** opens the library, and **Sample page**
+walks the flow on the drawn artifact with no photograph at all.
+
+What you shoot or pick then carries through the capture screen, the last-shot thumbnail
+and the read, where the lift runs over it. The photo never leaves the device: it lives as
+an object URL, released when it's replaced or the flow is reset, and the camera track is
+stopped when the screen unmounts.
 
 Detection is *not* wired up, and the screens say so rather than implying otherwise — this
 is the one place where a convincing demo would be a lie about what the product does:
