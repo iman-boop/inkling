@@ -28,11 +28,12 @@ A static build — no server, no database, no environment variables. `npm run bu
 `app/dist`, and the asset paths are relative, so the same output works at a domain root
 or under a `/<repo>/` subpath.
 
-The `vercel.json` at the repository root points Vercel at this subdirectory, so importing
-the repo needs no configuration: install is `npm install --prefix app`, build is
-`npm run build --prefix app`, and the output is `app/dist`. (Setting **Root Directory**
-to `app` in the project settings does the same thing.) Any other static host works the
-same way — build, then serve `app/dist`.
+The app lives in a subdirectory, so a host that clones the whole repository needs
+pointing at it. On Vercel that is one setting — **Root Directory: `app`** — and the Vite
+preset, the build command and the output directory are then detected on their own; don't
+also add a root `vercel.json` with `--prefix app` commands, because the two stack and the
+build ends up looking for `app/app/package.json`. Any other static host works the same
+way: build inside `app`, then serve `app/dist`.
 
 Serve it over HTTPS. The capture screen reaches for the camera, and browsers only hand
 that over on a secure origin.
