@@ -12,7 +12,9 @@ import { Purpose } from './screens/Purpose'
 import { Reading } from './screens/Reading'
 import { Resnap } from './screens/Resnap'
 import { Review } from './screens/Review'
+import { Label } from './screens/Label'
 import { OwnPage } from './screens/OwnPage'
+import { TypeWithIt } from './screens/TypeWithIt'
 import { NoHandwriting, PrintedType, UnsupportedScript } from './screens/errors/AfterTheRead'
 
 interface Entry {
@@ -132,10 +134,29 @@ const SCREENS: Entry[] = [
     id: 'own-page',
     label: 'Your own page — what we found',
     ref: 'new',
-    group: 'Read & review',
+    group: 'Your own page',
     caption:
-      'Where a real photograph runs out: real marks, lifted off it — and no claim about which letters they are.',
+      'What a real photograph actually gave up: real marks, real numbers, and no claim about which letters they are.',
     render: () => <OwnPage />,
+  },
+  {
+    id: 'label',
+    label: 'Name the shapes',
+    ref: 'new',
+    group: 'Your own page',
+    caption:
+      'The reader is you: shapes are grouped first, so one keystroke names every instance of that letter on the page.',
+    render: () => <Label />,
+  },
+  {
+    id: 'type-with-it',
+    label: 'Type in your own ink',
+    ref: 'new',
+    group: 'Your own page',
+    light: true,
+    caption:
+      'Every glyph is a patch of your photograph. Type the same letter twice and you get the two you actually wrote.',
+    render: () => <TypeWithIt />,
   },
   {
     id: 'partial-read',

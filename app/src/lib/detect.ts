@@ -20,7 +20,17 @@ export interface Mark {
   y: number
   width: number
   height: number
+  /**
+   * The mark's shape, normalised into a small square grid — the ink of this
+   * component only, so a neighbouring stroke that crosses the box doesn't
+   * count. Two marks of the same letter have similar signatures, which is what
+   * lets one label cover every other instance of that shape on the page.
+   */
+  signature: number[]
 }
+
+/** Side of the signature grid. */
+export const SIGNATURE = 12
 
 export type Verdict = 'page' | 'no-ink' | 'too-dark' | 'too-busy' | 'unreadable'
 
@@ -134,15 +144,28 @@ export async function analysePage(url: string): Promise<PageRead> {
   return { ...base, verdict: 'page' }
 }
 
+/** A component before it is known whether it is one letter or several. */
+interface Blob {
+  member: number[]
+  minX: number
+  minY: number
+  boxWidth: number
+  boxHeight: number
+}
+
 /**
  * Connected dark pixels, kept only where the group is shaped like a written
  * mark: small enough to be a letter, sparse enough to be strokes rather than
  * a filled shape, and not a hairline scratch.
+ *
+ * Connectedness alone is not letterhood — a hand that joins its letters welds
+ * a whole word into one component — so wide runs are cut back apart before
+ * anything downstream treats them as glyphs.
  */
 function groupMarks(ink: Uint8Array, width: number, height: number): Mark[] {
   const seen = new Uint8Array(ink.length)
   const stack = new Int32Array(ink.length)
-  const marks: Mark[] = []
+  const blobs: Blob[] = []
 
   const minSide = Math.max(5, Math.round(width * 0.006))
   const maxSide = Math.round(width * 0.14)
@@ -159,12 +182,14 @@ function groupMarks(ink: Uint8Array, width: number, height: number): Mark[] {
     let maxX = 0
     let minY = height
     let maxY = 0
+    const member: number[] = []
 
     while (top < stack.length) {
       const index = stack[top++]
       const x = index % width
       const y = (index - x) / width
       pixels += 1
+      member.push(index)
       if (x < minX) minX = x
       if (x > maxX) maxX = x
       if (y < minY) minY = y
@@ -185,25 +210,135 @@ function groupMarks(ink: Uint8Array, width: number, height: number): Mark[] {
 
     const boxWidth = maxX - minX + 1
     const boxHeight = maxY - minY + 1
-    const longest = Math.max(boxWidth, boxHeight)
-    const shortest = Math.min(boxWidth, boxHeight)
     const fill = pixels / (boxWidth * boxHeight)
 
-    if (longest < minSide || longest > maxSide) continue
-    if (shortest < 2) continue
-    if (longest / shortest > 7) continue
+    if (boxHeight < minSide || boxHeight > maxSide) continue
+    if (Math.min(boxWidth, boxHeight) < 2) continue
+    // A joined word is wide, so width is capped generously and cut up below.
+    if (boxWidth > maxSide * 6) continue
+    if (boxHeight / boxWidth > 7) continue
     // Pen strokes leave a sparse box. A solid one is a shadow or an object.
-    if (fill < 0.08 || fill > 0.78) continue
+    if (fill < 0.06 || fill > 0.8) continue
 
-    marks.push({
-      x: minX / width,
-      y: minY / height,
-      width: boxWidth / width,
-      height: boxHeight / height,
-    })
+    blobs.push({ member, minX, minY, boxWidth, boxHeight })
   }
 
-  return marks
+  if (!blobs.length) return []
+
+  // What one letter looks like on this page: the usual height, and the usual
+  // width among the blobs narrow enough to be a single letter already.
+  const heights = blobs.map((blob) => blob.boxHeight).sort((a, b) => a - b)
+  const letterHeight = heights[Math.floor(heights.length / 2)]
+  const singles = blobs
+    .filter((blob) => blob.boxWidth <= letterHeight * 1.2)
+    .map((blob) => blob.boxWidth)
+    .sort((a, b) => a - b)
+  const letterWidth = singles.length
+    ? Math.max(3, singles[Math.floor(singles.length / 2)])
+    : Math.max(3, Math.round(letterHeight * 0.7))
+
+  return blobs.flatMap((blob) => cut(blob, width, letterWidth)).map((piece) => ({
+    x: piece.minX / width,
+    y: piece.minY / height,
+    width: piece.boxWidth / width,
+    height: piece.boxHeight / height,
+    signature: sign(piece.member, width, piece.minX, piece.minY, piece.boxWidth, piece.boxHeight),
+  }))
+}
+
+/**
+ * Cut a joined run where the pen is thinnest.
+ *
+ * Letters in a word are welded at the join, and the join carries less ink than
+ * the letters either side of it — so the columns with the least ink are where
+ * the word comes apart. Approximate by nature: it splits `rn` as happily as it
+ * splits `r` from `n`, which is exactly why a person names the results.
+ */
+function cut(blob: Blob, width: number, letterWidth: number): Blob[] {
+  const parts = Math.round(blob.boxWidth / letterWidth)
+  if (parts < 2 || blob.boxWidth < letterWidth * 1.7) return [blob]
+
+  // Ink per column, across the blob.
+  const profile = new Array<number>(blob.boxWidth).fill(0)
+  for (const index of blob.member) profile[(index % width) - blob.minX] += 1
+
+  const guard = Math.max(2, Math.floor(letterWidth * 0.45))
+  const cuts: number[] = []
+  for (let piece = 1; piece < parts; piece += 1) {
+    const ideal = Math.round((blob.boxWidth * piece) / parts)
+    let best = -1
+    let bestInk = Infinity
+    for (let x = ideal - guard; x <= ideal + guard; x += 1) {
+      if (x <= guard || x >= blob.boxWidth - guard) continue
+      if (cuts.some((previous) => Math.abs(previous - x) < guard)) continue
+      if (profile[x] < bestInk) {
+        bestInk = profile[x]
+        best = x
+      }
+    }
+    if (best > 0) cuts.push(best)
+  }
+  if (!cuts.length) return [blob]
+
+  const bounds = [0, ...cuts.sort((a, b) => a - b), blob.boxWidth]
+  const pieces: Blob[] = []
+
+  for (let i = 0; i < bounds.length - 1; i += 1) {
+    const from = bounds[i]
+    const to = bounds[i + 1]
+    const member = blob.member.filter((index) => {
+      const column = (index % width) - blob.minX
+      return column >= from && column < to
+    })
+    if (member.length < 6) continue
+
+    let minX = Infinity
+    let maxX = -Infinity
+    let minY = Infinity
+    let maxY = -Infinity
+    for (const index of member) {
+      const x = index % width
+      const y = (index - x) / width
+      if (x < minX) minX = x
+      if (x > maxX) maxX = x
+      if (y < minY) minY = y
+      if (y > maxY) maxY = y
+    }
+    pieces.push({ member, minX, minY, boxWidth: maxX - minX + 1, boxHeight: maxY - minY + 1 })
+  }
+
+  return pieces.length ? pieces : [blob]
+}
+
+/**
+ * The component's own ink, scaled into a SIGNATURE × SIGNATURE grid. The
+ * longer side sets the scale and the shorter one is centred, so a tall thin
+ * mark and a short wide one stay distinguishable.
+ */
+function sign(
+  member: number[],
+  width: number,
+  minX: number,
+  minY: number,
+  boxWidth: number,
+  boxHeight: number,
+): number[] {
+  const grid = new Array<number>(SIGNATURE * SIGNATURE).fill(0)
+  const scale = (SIGNATURE - 2) / Math.max(boxWidth, boxHeight)
+  const offsetX = (SIGNATURE - boxWidth * scale) / 2
+  const offsetY = (SIGNATURE - boxHeight * scale) / 2
+
+  for (const index of member) {
+    const x = index % width
+    const y = (index - x) / width
+    const cellX = Math.min(SIGNATURE - 1, Math.max(0, Math.floor((x - minX) * scale + offsetX)))
+    const cellY = Math.min(SIGNATURE - 1, Math.max(0, Math.floor((y - minY) * scale + offsetY)))
+    grid[cellY * SIGNATURE + cellX] += 1
+  }
+
+  // Normalise so a thick pen and a fine one compare on shape, not on weight.
+  const peak = Math.max(...grid) || 1
+  return grid.map((value) => value / peak)
 }
 
 /**
@@ -298,6 +433,20 @@ export function squareRegion(mark: Mark, aspect: number, pad = 1.25): Region {
     y: clamp(mark.y + mark.height / 2 - height / 2, 0, 1 - height),
     width,
     height,
+  }
+}
+
+/** The mark itself with a hair of air, keeping its own proportions. */
+export function tightRegion(mark: Mark, pad = 0.12): Region {
+  const padX = mark.width * pad
+  const padY = mark.height * pad
+  const x = clamp(mark.x - padX, 0, 1)
+  const y = clamp(mark.y - padY, 0, 1)
+  return {
+    x,
+    y,
+    width: Math.min(1 - x, mark.width + padX * 2),
+    height: Math.min(1 - y, mark.height + padY * 2),
   }
 }
 

@@ -61,7 +61,7 @@ export function OwnPage() {
         }}
       >
         <div style={{ font: `400 18px/1.15 ${font.heading}`, color: '#c9bfff' }}>
-          We can't tell you which letters these are
+          We can't read them. You can.
         </div>
         <div
           style={{
@@ -71,9 +71,10 @@ export function OwnPage() {
             marginTop: 6,
           }}
         >
-          Finding the ink is arithmetic; naming it is a reader we haven't built. Making the font
-          from here would mean inventing fifty-two shapes and calling them yours — so we won't
-          pretend. The tiles above are the honest part: real marks, cut from your photograph.
+          Finding the ink is arithmetic; knowing an <em>e</em> from an <em>h</em> is a reader we
+          haven't built, and guessing would mean inventing shapes and calling them yours. So the
+          naming is yours — but not one mark at a time: the same shape is grouped wherever it
+          appears, so one keystroke names every <em>e</em> on the page at once.
         </div>
         <div style={{ fontSize: 11.5, color: 'rgba(242,244,234,.5)', marginTop: 10 }}>
           {marks.length} marks · {coverage}% of the page is ink
@@ -83,8 +84,11 @@ export function OwnPage() {
       <Spacer />
 
       <div style={{ padding: '0 18px', display: 'flex', flexDirection: 'column', gap: 9 }}>
-        <PrimaryPill onClick={showSample}>See the whole flow on the sample page</PrimaryPill>
-        <GhostPill onClick={() => go('camera')}>Photograph another page</GhostPill>
+        <PrimaryPill onClick={() => go('label')}>Name these shapes</PrimaryPill>
+        <div style={{ display: 'flex', gap: 9 }}>
+          <GhostPill onClick={() => go('camera')}>Another page</GhostPill>
+          <GhostPill onClick={showSample}>See the sample flow</GhostPill>
+        </div>
         <div
           style={{
             textAlign: 'center',

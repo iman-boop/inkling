@@ -136,11 +136,27 @@ needs answered:
 - **A page** lifts real ink: the tiles that fly into the glyph bed are cut from the
   photograph at the places marks were found, and the counter is the real count.
 
-What the app still cannot do is say *which letter* a mark is — that needs a reader this
-doesn't have. So it doesn't: the bed is labelled **marks, not letters**, and the flow
-stops at `own-page`, which shows the real tiles, the real numbers, and refuses to build
-a font from them. Everything downstream of that — review, the gaps loop, type-to-test,
-export — runs on the designed sample page, reached by a button that says so.
+### Which letter is which
+
+Nothing here reads handwriting — so the reading is yours, and the app's job is to make it
+cost almost nothing. `lib/detect.ts` cuts joined runs apart at their thinnest columns
+(letters in a word are welded at the join, and the join carries the least ink), and gives
+every mark a normalised signature. `lib/cluster.ts` then groups marks by that signature,
+so the `label` screen asks about *shapes*, not marks: name this one `o` and all
+twenty-three `o`s on the page are named. Groups come commonest-first, so the letters the
+page is mostly made of come first; **Not a letter** drops a group, **These differ** splits
+one the grouping got wrong.
+
+`type-with-it` is the payoff, and every glyph on it is a patch of the photograph at the
+place that ink was found. Type the same letter twice and you get the two you actually
+wrote, because they are two different marks off the same page. A letter nobody has named
+draws as an empty lime socket — the app's own "needs you" — rather than a substitute
+shape passed off as yours.
+
+None of this is recognition, and the screens don't claim it is: the grouping is distance
+between bitmaps, which is why a person says what each group is, and why a group can be
+broken up. What it buys is the real thing at the end of the flow — your ink, as letters,
+because you said which letters they are.
 
 Known limit: a photograph of *printed* text passes the gate, because separating print
 from handwriting honestly needs shape comparison across repeated letters. It's reported

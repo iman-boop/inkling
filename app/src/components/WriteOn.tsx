@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { WRITE, usePrefersReducedMotion } from '../lib/motion'
 import { variantFor, variantStyle } from '../lib/variants'
 import { acid, font } from '../lib/theme'
@@ -59,6 +59,7 @@ export function WriteOn({
   size = 31,
   caret = true,
   samplesFor,
+  renderGlyph,
   color = acid.noteInk,
 }: {
   text: string
@@ -66,6 +67,11 @@ export function WriteOn({
   caret?: boolean
   /** How many shapes of this letter came off the page. */
   samplesFor?: (ch: string) => number
+  /**
+   * Draw this letter yourself — used when the glyphs are real ink cut from a
+   * photograph rather than the stand-in script face. Return null to fall back.
+   */
+  renderGlyph?: (ch: string, occurrence: number) => ReactNode | null
   color?: string
 }) {
   const seen = new Map<string, number>()
@@ -89,6 +95,15 @@ export function WriteOn({
         }
         const occurrence = seen.get(ch) ?? 0
         seen.set(ch, occurrence + 1)
+
+        const own = renderGlyph?.(ch, occurrence)
+        if (own)
+          return (
+            <span key={i} className="ink-pen" style={{ display: 'inline-block' }}>
+              {own}
+            </span>
+          )
+
         const samples = samplesFor?.(ch) ?? 1
         return (
           <span

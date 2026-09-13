@@ -6,6 +6,7 @@ import {
   useState,
   type ReactNode,
 } from 'react'
+import { splitCluster, type Cluster } from '../lib/cluster'
 import type { PageRead } from '../lib/detect'
 import {
   RESNAP_SHAKY,
@@ -30,6 +31,8 @@ export type ScreenId =
   | 'paywall'
   | 'library'
   | 'own-page'
+  | 'label'
+  | 'type-with-it'
   | 'no-handwriting'
   | 'printed-type'
   | 'unsupported-script'
@@ -86,6 +89,17 @@ interface Store {
   read: PageRead | null
   setRead: (read: PageRead | null) => void
 
+  /**
+   * The marks grouped by shape, and what the person has called each group.
+   * This is the whole reader: no model, one human, one keystroke per shape.
+   */
+  clusters: Cluster[]
+  setClusters: (clusters: Cluster[]) => void
+  nameCluster: (index: number, letter: string) => void
+  skipCluster: (index: number) => void
+  /** "These aren't the same letter" — break the group in two. */
+  splitAt: (index: number) => void
+
   /** Marks on the photo that have had a decision. */
   resolvedMarks: Record<string, string>
   resolveMark: (id: string, ch: string) => void
@@ -121,7 +135,8 @@ export function StoreProvider({
   const [focusedGlyph, focusGlyph] = useState<string | null>(null)
   const [resolvedMarks, setResolvedMarks] = useState<Record<string, string>>({})
   const [photo, setPhotoUrl] = useState<string | null>(null)
-  const [read, setRead] = useState<PageRead | null>(null)
+  const [read, setReadState] = useState<PageRead | null>(null)
+  const [clusters, setClusters] = useState<Cluster[]>([])
   const [fontName, setFontName] = useState("Grandma's Recipe")
   const [plan, setPlan] = useState<Plan>('once')
   const [purchased, setPurchased] = useState(false)
@@ -144,6 +159,39 @@ export function StoreProvider({
   const resolve = useCallback((ch: string, state: GlyphState) => {
     setGlyphs((all) => all.map((g) => (g.ch === ch ? { ...g, state } : g)))
   }, [])
+
+  // A fresh read is a fresh set of shapes to name.
+  const setRead = useCallback((next: PageRead | null) => {
+    setReadState(next)
+    setClusters([])
+  }, [])
+
+  const nameCluster = useCallback((index: number, letter: string) => {
+    setClusters((all) =>
+      all.map((cluster, i) => (i === index ? { ...cluster, letter, skipped: false } : cluster)),
+    )
+  }, [])
+
+  const skipCluster = useCallback((index: number) => {
+    setClusters((all) =>
+      all.map((cluster, i) =>
+        i === index ? { ...cluster, skipped: true, letter: undefined } : cluster,
+      ),
+    )
+  }, [])
+
+  const splitAt = useCallback(
+    (index: number) => {
+      setClusters((all) => {
+        const marks = read?.marks
+        if (!marks) return all
+        const pieces = splitCluster(all[index], marks)
+        if (pieces.length < 2) return all
+        return [...all.slice(0, index), ...pieces, ...all.slice(index + 1)]
+      })
+    },
+    [read],
+  )
 
   // The photo never leaves the device — it lives as an object URL for as long
   // as this session is open, and the old one is released when it's replaced.
@@ -184,6 +232,7 @@ export function StoreProvider({
     focusGlyph(null)
     setResolvedMarks({})
     setPhoto(null)
+    setClusters([])
     setFontName("Grandma's Recipe")
     setPlan('once')
     setPurchased(false)
@@ -210,6 +259,11 @@ export function StoreProvider({
     setPhoto,
     read,
     setRead,
+    clusters,
+    setClusters,
+    nameCluster,
+    skipCluster,
+    splitAt,
     resolvedMarks,
     resolveMark,
     fontName,
