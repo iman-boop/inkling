@@ -12,6 +12,7 @@ import { Purpose } from './screens/Purpose'
 import { Reading } from './screens/Reading'
 import { Resnap } from './screens/Resnap'
 import { Review } from './screens/Review'
+import { OwnPage } from './screens/OwnPage'
 import { NoHandwriting, PrintedType, UnsupportedScript } from './screens/errors/AfterTheRead'
 
 interface Entry {
@@ -126,6 +127,15 @@ const SCREENS: Entry[] = [
     group: 'Finish',
     caption: 'The partial badge follows the font in here, so it can never be sold as complete.',
     render: () => <Library />,
+  },
+  {
+    id: 'own-page',
+    label: 'Your own page — what we found',
+    ref: 'new',
+    group: 'Read & review',
+    caption:
+      'Where a real photograph runs out: real marks, lifted off it — and no claim about which letters they are.',
+    render: () => <OwnPage />,
   },
   {
     id: 'partial-read',

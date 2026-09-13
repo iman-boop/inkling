@@ -6,6 +6,7 @@ import {
   useState,
   type ReactNode,
 } from 'react'
+import type { PageRead } from '../lib/detect'
 import {
   RESNAP_SHAKY,
   seedGlyphs,
@@ -28,6 +29,7 @@ export type ScreenId =
   | 'preview'
   | 'paywall'
   | 'library'
+  | 'own-page'
   | 'no-handwriting'
   | 'printed-type'
   | 'unsupported-script'
@@ -80,6 +82,10 @@ interface Store {
   photo: string | null
   setPhoto: (file: File | null) => void
 
+  /** What was actually found on that photo. Null until it has been looked at. */
+  read: PageRead | null
+  setRead: (read: PageRead | null) => void
+
   /** Marks on the photo that have had a decision. */
   resolvedMarks: Record<string, string>
   resolveMark: (id: string, ch: string) => void
@@ -115,6 +121,7 @@ export function StoreProvider({
   const [focusedGlyph, focusGlyph] = useState<string | null>(null)
   const [resolvedMarks, setResolvedMarks] = useState<Record<string, string>>({})
   const [photo, setPhotoUrl] = useState<string | null>(null)
+  const [read, setRead] = useState<PageRead | null>(null)
   const [fontName, setFontName] = useState("Grandma's Recipe")
   const [plan, setPlan] = useState<Plan>('once')
   const [purchased, setPurchased] = useState(false)
@@ -141,6 +148,8 @@ export function StoreProvider({
   // The photo never leaves the device — it lives as an object URL for as long
   // as this session is open, and the old one is released when it's replaced.
   const setPhoto = useCallback((file: File | null) => {
+    // A new page has not been looked at yet.
+    setRead(null)
     setPhotoUrl((previous) => {
       if (previous) URL.revokeObjectURL(previous)
       return file ? URL.createObjectURL(file) : null
@@ -199,6 +208,8 @@ export function StoreProvider({
     gapsFilled,
     photo,
     setPhoto,
+    read,
+    setRead,
     resolvedMarks,
     resolveMark,
     fontName,

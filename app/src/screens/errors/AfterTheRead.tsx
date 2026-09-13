@@ -14,7 +14,23 @@ import { useStore } from '../../state/store'
 
 /** Nothing usable came back — three named causes, one needing no new photo. */
 export function NoHandwriting() {
-  const { go } = useStore()
+  const { go, photo, read, setPhoto } = useStore()
+
+  const showSample = () => {
+    setPhoto(null)
+    go('reading')
+  }
+
+  // Say what was actually measured, rather than one generic sentence for
+  // every way a photograph can fail to be a page.
+  const reason =
+    read?.verdict === 'too-dark'
+      ? "It's too dark in there to tell ink from paper."
+      : read?.verdict === 'too-busy'
+        ? "There's too much going on in this one — we can't separate strokes from everything else."
+        : read && read.colour > 0.34
+          ? "This doesn't look like a page at all — there are no strokes in it we could lift letters from."
+          : 'There\u2019s a page in there, but no strokes we can lift letters from. Most often it\u2019s one of these three.'
   const causes = [
     <>
       The page is upside down or sideways — <span style={{ color: acid.lime }}>rotate and
@@ -33,10 +49,7 @@ export function NoHandwriting() {
           <br />
           any handwriting
         </Title>
-        <Sub>
-          There's a page in there, but no strokes we can lift letters from. Most often it's one of
-          these three.
-        </Sub>
+        <Sub>{reason}</Sub>
       </div>
 
       <div
@@ -50,27 +63,36 @@ export function NoHandwriting() {
           flex: 'none',
         }}
       >
+        {photo ? (
+          <img
+            src={photo}
+            alt="The page you photographed"
+            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', opacity: 0.75 }}
+          />
+        ) : (
+          <div
+            style={{
+              position: 'absolute',
+              inset: 22,
+              background: '#efe6d2',
+              borderRadius: 5,
+              opacity: 0.35,
+            }}
+          />
+        )}
         <div
           style={{
             position: 'absolute',
-            inset: 22,
-            background: '#efe6d2',
-            borderRadius: 5,
-            opacity: 0.35,
-          }}
-        />
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            font: `400 14px ${font.heading}`,
-            color: 'rgba(242,244,234,.55)',
+            left: 0,
+            right: 0,
+            bottom: 0,
+            padding: '10px 14px',
+            background: 'linear-gradient(transparent,rgba(0,0,0,.75))',
+            font: `400 12px ${font.body}`,
+            color: 'rgba(242,244,234,.8)',
           }}
         >
-          your photo
+          {read ? `${read.marks.length} marks that could be strokes` : 'your photo'}
         </div>
       </div>
 
@@ -101,10 +123,16 @@ export function NoHandwriting() {
 
       <div style={{ padding: '0 18px', display: 'flex', flexDirection: 'column', gap: 9 }}>
         <PrimaryPill onClick={() => go('camera')}>Take another photo</PrimaryPill>
-        <div style={{ display: 'flex', gap: 9 }}>
-          <GhostPill onClick={() => go('reading')}>Rotate &amp; re-read</GhostPill>
-          <GhostPill onClick={() => go('review')}>Mark letters myself</GhostPill>
-        </div>
+        {/* Only offer routes that exist: with a real photograph there is no
+            re-read to run and no letters to mark, so don't draw those doors. */}
+        {photo ? (
+          <GhostPill onClick={showSample}>See the flow on the sample page</GhostPill>
+        ) : (
+          <div style={{ display: 'flex', gap: 9 }}>
+            <GhostPill onClick={() => go('reading')}>Rotate &amp; re-read</GhostPill>
+            <GhostPill onClick={() => go('review')}>Mark letters myself</GhostPill>
+          </div>
+        )}
       </div>
     </Screen>
   )

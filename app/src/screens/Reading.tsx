@@ -4,6 +4,7 @@ import { LIFT_FOUND, LIFT_LINES } from '../lib/font-data'
 import { EASE, LIFT, haptic, usePrefersReducedMotion } from '../lib/motion'
 import { acid, font } from '../lib/theme'
 import { useStore } from '../state/store'
+import { PhotoReading } from './PhotoReading'
 
 /**
  * 8a · Letters lifting off the page — 1,180ms total.
@@ -19,22 +20,6 @@ const SOURCE_SIZE = 25
 const CELL_SIZE = 30
 const BED_CELLS = 9
 
-/**
- * Where the glyphs lift from when the page is a real photograph. Finding
- * letters in someone's handwriting takes the model this app doesn't have yet,
- * so the demo spreads the lift across the page and says so on screen.
- */
-const SCATTER = [
-  { left: '11%', top: '17%' },
-  { left: '35%', top: '11%' },
-  { left: '59%', top: '21%' },
-  { left: '79%', top: '14%' },
-  { left: '19%', top: '44%' },
-  { left: '45%', top: '51%' },
-  { left: '71%', top: '43%' },
-  { left: '29%', top: '72%' },
-  { left: '61%', top: '70%' },
-]
 
 /** One glyph's flight, measured from the page to its cell. */
 interface Flight {
@@ -47,7 +32,14 @@ interface Flight {
 }
 
 export function Reading() {
-  const { go, photo } = useStore()
+  const { photo } = useStore()
+  // A real photograph gets the real read; the drawn artifact keeps the
+  // choreographed one it was designed for.
+  return photo ? <PhotoReading /> : <SampleReading />
+}
+
+function SampleReading() {
+  const { go } = useStore()
   const reduced = usePrefersReducedMotion()
 
   const rootRef = useRef<HTMLDivElement>(null)
@@ -156,9 +148,7 @@ export function Reading() {
         }}
       >
         <span style={{ font: `400 19px ${font.heading}` }}>Reading your page</span>
-        <span style={{ fontSize: 12, color: photo ? acid.violet : acid.lime }}>
-          {photo ? 'demo read' : `${counted} found`}
-        </span>
+        <span style={{ fontSize: 12, color: acid.lime }}>{counted} found</span>
       </div>
 
       {/* the page. Letters that have left it leave a gap behind. */}
@@ -173,37 +163,6 @@ export function Reading() {
           flex: 'none',
         }}
       >
-        {photo ? (
-          <>
-            <img
-              src={photo}
-              alt="The page you photographed"
-              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-            />
-            {/* Invisible anchors: with a real page we have no letter positions,
-                so the demo lifts from points spread across the photograph. */}
-            {SCATTER.map((point, i) => (
-              <span
-                key={i}
-                ref={(el) => {
-                  sourceRefs.current[i] = el
-                }}
-                aria-hidden
-                style={{
-                  position: 'absolute',
-                  left: point.left,
-                  top: point.top,
-                  fontFamily: font.hand,
-                  fontSize: SOURCE_SIZE,
-                  lineHeight: 1.75,
-                  opacity: 0,
-                }}
-              >
-                {lifted[i]?.text ?? ''}
-              </span>
-            ))}
-          </>
-        ) : (
         <div
           style={{
             padding: '26px 24px',
@@ -240,7 +199,6 @@ export function Reading() {
             </div>
           ))}
         </div>
-        )}
 
         {flying ? (
           <div
@@ -269,7 +227,6 @@ export function Reading() {
         }}
       >
         <span>Glyph bed</span>
-        {photo ? <span style={{ color: acid.violet }}>Sample set</span> : null}
       </div>
 
       <div
@@ -366,7 +323,6 @@ export function Reading() {
             <FlyingGlyph
               key={`${flight.ch}-${i}`}
               flight={flight}
-              overPhoto={!!photo}
               onPluck={() => onPluck(i)}
               onLand={() => onLand(i)}
             />
@@ -384,13 +340,10 @@ export function Reading() {
  */
 function FlyingGlyph({
   flight,
-  overPhoto,
   onPluck,
   onLand,
 }: {
   flight: Flight
-  /** A photograph can be any colour, so the glyph carries its own contrast. */
-  overPhoto: boolean
   onPluck: () => void
   onLand: () => void
 }) {
@@ -403,9 +356,7 @@ function FlyingGlyph({
     const grow = CELL_SIZE / SOURCE_SIZE
     const total = LIFT.pluck + LIFT.travel
     const pluckAt = LIFT.pluck / total
-    // Off the sample page the glyph keeps its ink; off a photograph it starts
-    // in the bed's own ink, because the photo underneath can be any colour.
-    const startInk = overPhoto ? acid.ink : acid.noteInk
+    const startInk = acid.noteInk
     // The arc rises above the straight line between page and cell.
     const arc = Math.max(26, Math.abs(flight.dy) * 0.22)
 
@@ -460,8 +411,7 @@ function FlyingGlyph({
         fontFamily: font.hand,
         fontSize: SOURCE_SIZE,
         lineHeight: 1.75,
-        color: overPhoto ? acid.ink : acid.noteInk,
-        textShadow: overPhoto ? '0 1px 6px rgba(0,0,0,.65)' : undefined,
+        color: acid.noteInk,
         transformOrigin: 'center',
         willChange: 'transform',
       }}

@@ -124,14 +124,28 @@ and the read, where the lift runs over it. The photo never leaves the device: it
 an object URL, released when it's replaced or the flow is reset, and the camera track is
 stopped when the screen unmounts.
 
-Detection is *not* wired up, and the screens say so rather than implying otherwise — this
-is the one place where a convincing demo would be a lie about what the product does:
+The app also *looks* at the page, because a product about someone's own handwriting must
+never invent a read. `lib/detect.ts` thresholds the photo against its own local
+background, groups the dark pixels that touch each other, and keeps the groups shaped
+like pen strokes — arithmetic, no model. That is enough to answer the question the flow
+needs answered:
 
-- the read is labelled **demo read** against a **sample set**;
-- the lift rises from points spread across the photograph, not from located letters;
-- review stays on the sample page and says why. A highlight has to enclose the letter it
-  marks, and we can't find letters in a photograph yet, so the alternative would be
-  drawing confident boxes over someone's handwriting at random.
+- **Not a page** (a selfie, a dark room, a busy scene) goes to the designed
+  *"We couldn't find any handwriting"* screen, which reports what was actually measured —
+  how many marks could be strokes, and whether the problem was light, colour or clutter.
+- **A page** lifts real ink: the tiles that fly into the glyph bed are cut from the
+  photograph at the places marks were found, and the counter is the real count.
+
+What the app still cannot do is say *which letter* a mark is — that needs a reader this
+doesn't have. So it doesn't: the bed is labelled **marks, not letters**, and the flow
+stops at `own-page`, which shows the real tiles, the real numbers, and refuses to build
+a font from them. Everything downstream of that — review, the gaps loop, type-to-test,
+export — runs on the designed sample page, reached by a button that says so.
+
+Known limit: a photograph of *printed* text passes the gate, because separating print
+from handwriting honestly needs shape comparison across repeated letters. It's reported
+as marks like anything else and still can't become a font, so nothing is fabricated — but
+the designed `printed-type` screen is not yet wired to a real signal.
 
 ## Not built
 
