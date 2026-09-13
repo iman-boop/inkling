@@ -123,7 +123,7 @@ export async function analysePage(url: string): Promise<PageRead> {
   }
 
   const coverage = inkPixels / count
-  const marks = groupMarks(ink, width, height)
+  const marks = refine(groupMarks(ink, width, height), width, height)
   const base = { marks, coverage, paper, colour, aspect }
 
   // The page has to be a page before anything else is worth saying.
@@ -179,6 +179,10 @@ function groupMarks(ink: Uint8Array, width: number, height: number): Mark[] {
         (seen[index + width] = 1), (stack[--top] = index + width)
     }
 
+    // A group that runs off the frame is the page edge, the desk or a hand —
+    // never a letter someone wrote.
+    if (minX === 0 || minY === 0 || maxX === width - 1 || maxY === height - 1) continue
+
     const boxWidth = maxX - minX + 1
     const boxHeight = maxY - minY + 1
     const longest = Math.max(boxWidth, boxHeight)
@@ -200,6 +204,69 @@ function groupMarks(ink: Uint8Array, width: number, height: number): Mark[] {
   }
 
   return marks
+}
+
+/**
+ * What's left after the page is read as a page.
+ *
+ * Two things a letter is: about the same size as the other letters around it —
+ * a page is mostly written in one hand at one size, and a title five times the
+ * body's height is a different thing — and not alone, because writing comes in
+ * lines. Both rules are about the marks together, which is why they can't be
+ * applied one component at a time.
+ */
+function refine(marks: Mark[], width: number, height: number): Mark[] {
+  if (marks.length < 3) return marks
+
+  const px = (mark: Mark) => ({
+    x: (mark.x + mark.width / 2) * width,
+    y: (mark.y + mark.height / 2) * height,
+    w: mark.width * width,
+    h: mark.height * height,
+  })
+
+  const heights = marks.map((mark) => mark.height * height).sort((a, b) => a - b)
+  const median = heights[Math.floor(heights.length / 2)] || 1
+
+  const sized = marks.filter((mark) => {
+    const { w, h } = px(mark)
+    return h >= median * 0.5 && h <= median * 2.2 && w <= median * 9
+  })
+  if (sized.length < 3) return sized
+
+  // Writing comes in lines: a mark with nothing beside it is a speck.
+  const centres = sized.map(px)
+  return sized.filter((_, i) => {
+    let neighbours = 0
+    for (let j = 0; j < centres.length && neighbours < 2; j += 1) {
+      if (i === j) continue
+      if (
+        Math.abs(centres[i].y - centres[j].y) < median * 1.2 &&
+        Math.abs(centres[i].x - centres[j].x) < median * 8
+      )
+        neighbours += 1
+    }
+    return neighbours >= 2
+  })
+}
+
+/**
+ * Nine marks that stand for the page: closest to the dominant size, spread
+ * across the whole of it, rather than whatever happens to sit at the top.
+ */
+export function representative(marks: Mark[], count: number): Mark[] {
+  if (marks.length <= count) return inReadingOrder(marks)
+
+  const heights = marks.map((mark) => mark.height).sort((a, b) => a - b)
+  const median = heights[Math.floor(heights.length / 2)]
+
+  const typical = [...marks]
+    .sort((a, b) => Math.abs(a.height - median) - Math.abs(b.height - median))
+    .slice(0, Math.max(count, Math.round(marks.length * 0.5)))
+
+  const ordered = inReadingOrder(typical)
+  const step = ordered.length / count
+  return Array.from({ length: count }, (_, i) => ordered[Math.floor(i * step)])
 }
 
 /** Reading order, so the lift runs down the page the way it was written. */

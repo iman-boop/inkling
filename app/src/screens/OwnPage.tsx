@@ -1,5 +1,5 @@
 import { Count, GhostPill, Kicker, PrimaryPill, Screen, Spacer } from '../components/ui'
-import { crop, inReadingOrder, squareRegion } from '../lib/detect'
+import { crop, representative, squareRegion } from '../lib/detect'
 import { acid, font } from '../lib/theme'
 import { useStore } from '../state/store'
 
@@ -17,7 +17,8 @@ export function OwnPage() {
   const { photo, read, setPhoto, go } = useStore()
   if (!photo || !read) return null
 
-  const marks = inReadingOrder(read.marks)
+  const marks = read.marks
+  const shown = representative(marks, 12)
   const coverage = Math.round(read.coverage * 1000) / 10
 
   const showSample = () => {
@@ -36,7 +37,7 @@ export function OwnPage() {
       </Count>
 
       <div style={{ padding: '0 18px 16px', display: 'grid', gridTemplateColumns: 'repeat(6,1fr)', gap: 8 }}>
-        {marks.slice(0, 12).map((mark, i) => (
+        {shown.map((mark, i) => (
           <div
             key={i}
             style={{

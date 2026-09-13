@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { PrimaryPill, Screen } from '../components/ui'
-import { analysePage, crop, inReadingOrder, squareRegion, type Mark } from '../lib/detect'
+import { analysePage, crop, representative, squareRegion, type Mark } from '../lib/detect'
 import { EASE, LIFT, haptic, usePrefersReducedMotion } from '../lib/motion'
 import { acid, font } from '../lib/theme'
 import { useStore } from '../state/store'
@@ -43,7 +43,7 @@ export function PhotoReading() {
   const [landed, setLanded] = useState<boolean[]>(() => Array(BED_CELLS).fill(false))
   const [skipped, setSkipped] = useState(false)
 
-  const marks = read ? inReadingOrder(read.marks).slice(0, BED_CELLS) : []
+  const marks = read ? representative(read.marks, BED_CELLS) : []
   const aspect = read?.aspect ?? 1
   const looking = read === null
 
