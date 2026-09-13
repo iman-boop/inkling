@@ -22,6 +22,21 @@ every screen with the design frame it came from. The flow also works end to end 
 start at the value prop and walk through to export. Deep links work too
 (`#review`, `#reading`, …).
 
+## Deploying
+
+A static build — no server, no database, no environment variables. `npm run build` emits
+`app/dist`, and the asset paths are relative, so the same output works at a domain root
+or under a `/<repo>/` subpath.
+
+The `vercel.json` at the repository root points Vercel at this subdirectory, so importing
+the repo needs no configuration: install is `npm install --prefix app`, build is
+`npm run build --prefix app`, and the output is `app/dist`. (Setting **Root Directory**
+to `app` in the project settings does the same thing.) Any other static host works the
+same way — build, then serve `app/dist`.
+
+Serve it over HTTPS. The capture screen reaches for the camera, and browsers only hand
+that over on a secure origin.
+
 ## How it's put together
 
 ```
