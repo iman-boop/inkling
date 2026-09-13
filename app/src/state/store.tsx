@@ -33,6 +33,7 @@ export type ScreenId =
   | 'own-page'
   | 'label'
   | 'type-with-it'
+  | 'export-font'
   | 'no-handwriting'
   | 'printed-type'
   | 'unsupported-script'

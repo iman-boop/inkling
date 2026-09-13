@@ -21,6 +21,12 @@ export interface Mark {
   width: number
   height: number
   /**
+   * The writing line this mark sits on, as a fraction of image height. What
+   * hangs below it is a descender — which is how a `g` knows to sit low
+   * without anyone having to say it is a `g`.
+   */
+  baseline: number
+  /**
    * The mark's shape, normalised into a small square grid — the ink of this
    * component only, so a neighbouring stroke that crosses the box doesn't
    * count. Two marks of the same letter have similar signatures, which is what
@@ -242,6 +248,7 @@ function groupMarks(ink: Uint8Array, width: number, height: number): Mark[] {
     y: piece.minY / height,
     width: piece.boxWidth / width,
     height: piece.boxHeight / height,
+    baseline: 0,
     signature: sign(piece.member, width, piece.minX, piece.minY, piece.boxWidth, piece.boxHeight),
   }))
 }
@@ -371,7 +378,7 @@ function refine(marks: Mark[], width: number, height: number): Mark[] {
 
   // Writing comes in lines: a mark with nothing beside it is a speck.
   const centres = sized.map(px)
-  return sized.filter((_, i) => {
+  const kept = sized.filter((_, i) => {
     let neighbours = 0
     for (let j = 0; j < centres.length && neighbours < 2; j += 1) {
       if (i === j) continue
@@ -383,6 +390,40 @@ function refine(marks: Mark[], width: number, height: number): Mark[] {
     }
     return neighbours >= 2
   })
+
+  return withBaselines(kept, height, median)
+}
+
+/**
+ * Where each line of writing sits.
+ *
+ * Marks are gathered into rows by their centres, and the row's baseline is the
+ * median of its marks' bottoms — robust, because most letters sit *on* the
+ * line and only a few hang under it. Every mark then carries its line with it,
+ * so a descender is recognisable as one without anyone naming the letter.
+ */
+function withBaselines(marks: Mark[], height: number, medianPx: number): Mark[] {
+  if (!marks.length) return marks
+
+  const order = [...marks].sort((a, b) => a.y + a.height / 2 - (b.y + b.height / 2))
+  const rows: Mark[][] = []
+  const gap = (medianPx * 0.7) / height
+
+  for (const mark of order) {
+    const centre = mark.y + mark.height / 2
+    const row = rows[rows.length - 1]
+    const last = row?.[row.length - 1]
+    if (row && last && Math.abs(centre - (last.y + last.height / 2)) < gap) row.push(mark)
+    else rows.push([mark])
+  }
+
+  for (const row of rows) {
+    const bottoms = row.map((mark) => mark.y + mark.height).sort((a, b) => a - b)
+    const baseline = bottoms[Math.floor(bottoms.length / 2)]
+    for (const mark of row) mark.baseline = baseline
+  }
+
+  return marks
 }
 
 /**

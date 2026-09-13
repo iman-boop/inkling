@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Ink } from '../components/Ink'
 import { Keyboard } from '../components/Keyboard'
-import { Screen, Spacer } from '../components/ui'
+import { PrimaryPill, Screen, Spacer } from '../components/ui'
 import { WriteOn } from '../components/WriteOn'
 import { marksForLetter, namedLetters } from '../lib/cluster'
 import { acid, font } from '../lib/theme'
@@ -175,6 +175,12 @@ export function TypeWithIt() {
       </div>
 
       <Spacer />
+
+      <div style={{ padding: '0 18px 14px' }}>
+        <PrimaryPill onClick={() => go('export-font')} disabled={named.length === 0}>
+          {named.length ? 'Make the font file' : 'Name a letter first'}
+        </PrimaryPill>
+      </div>
 
       <Keyboard onKey={type} onDelete={() => type(null)} />
     </Screen>

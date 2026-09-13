@@ -14,6 +14,7 @@ import { Resnap } from './screens/Resnap'
 import { Review } from './screens/Review'
 import { Label } from './screens/Label'
 import { OwnPage } from './screens/OwnPage'
+import { ExportFont } from './screens/ExportFont'
 import { TypeWithIt } from './screens/TypeWithIt'
 import { NoHandwriting, PrintedType, UnsupportedScript } from './screens/errors/AfterTheRead'
 
@@ -157,6 +158,15 @@ const SCREENS: Entry[] = [
     caption:
       'Every glyph is a patch of your photograph. Type the same letter twice and you get the two you actually wrote.',
     render: () => <TypeWithIt />,
+  },
+  {
+    id: 'export-font',
+    label: 'Make the .otf',
+    ref: 'new',
+    group: 'Your own page',
+    caption:
+      'Each named letter traced to an outline and assembled into a real font file — the specimen is set in the font itself.',
+    render: () => <ExportFont />,
   },
   {
     id: 'partial-read',

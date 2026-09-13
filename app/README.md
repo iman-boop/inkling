@@ -155,8 +155,27 @@ shape passed off as yours.
 
 None of this is recognition, and the screens don't claim it is: the grouping is distance
 between bitmaps, which is why a person says what each group is, and why a group can be
-broken up. What it buys is the real thing at the end of the flow — your ink, as letters,
-because you said which letters they are.
+broken up.
+
+### The font file
+
+`export-font` is where it leaves. For each named letter, the clearest example of its group
+is re-cut from the photograph at glyph resolution (the page-wide pass runs at 900px, and
+a letter traced from a 20px box looks like one), thresholded with Otsu against its own
+patch, and walked: `lib/trace.ts` follows the outside edge one way and the counters — the
+hole in an `o`, the eye of an `e` — the other, so the non-zero winding rule fills the
+stroke and leaves the hole empty. Ramer–Douglas–Peucker drops the points that say nothing,
+and the rest become quadratic curves, which is what TrueType stores anyway.
+
+Vertical placement comes from the page, not from a rule: every mark carries the baseline
+of the line it was written on (`withBaselines` in `detect.ts` takes the median bottom of
+each row, robust because most letters sit *on* the line), so a descender hangs because
+yours hung. `lib/font-build.ts` assembles the glyphs with `opentype.js` at 1000 units/em.
+
+The specimen above the save button is rendered **in the font that was just built** — the
+buffer goes through `FontFace` into the page — so what you see before saving is the file
+itself parsing and rendering, not a picture of it. Then it saves as a real `.otf` you can
+install. Nothing is uploaded; the whole pipeline runs on the device.
 
 Known limit: a photograph of *printed* text passes the gate, because separating print
 from handwriting honestly needs shape comparison across repeated letters. It's reported
